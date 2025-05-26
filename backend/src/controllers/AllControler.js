@@ -1,6 +1,6 @@
 const { userModel } = require("../models/UserModel");
 const bcrypt = require('bcrypt');
-const { jwtFunction } = require("../utils/jwt");
+const jwt = require("jsonwebtoken");
 
 
 
@@ -18,12 +18,15 @@ const signup = async (req, res) => {
 
 
           if (saveRes) {
-               jwtFunction(email, res)
+               const token = jwt.sign({ email }, process.env.SECRET, {
+                    expiresIn: "7d"
+               })
                await saveRes.save()
                res.status(200).json({
                     _id: saveRes._id,
                     profilePic: saveRes.profilePic,
-                    email: saveRes.email
+                    email: saveRes.email,
+                    token
                })
 
           } else {
@@ -54,12 +57,15 @@ const login = async (req, res) => {
           const verifyPass = await bcrypt.compare(password, userData.password)
           if (!verifyPass) return res.status(400).json({ code: 12, msg: "Invalid Credentials" })
 
-          jwtFunction(email, res)
+          const token = jwt.sign({email},process.env.SECRET,{
+          expiresIn:"7d"
+     })
           res.status(200).json({
                msg: "Succesfully Logged In",
                profilePic: userData.profilePic,
                userName: userData.userName,
-               email: userData.email
+               email: userData.email,
+               token
           })
 
 
@@ -72,33 +78,13 @@ const login = async (req, res) => {
 
 };
 
-const logout = async (req, res) => {
-     try {
-          res.clearCookie("chat-app-jwt", {
-               httpOnly: true,
-               sameSite: "strict",
-               secure: process.env.DEV
-          });
-
-          res.status(200).json({
-               success: true,
-               msg: "Successfully logged out"
-          });
-     } catch (error) {
-          res.status(500).json({
-               success: false,
-               msg: "Logout failed",
-               error: error.message
-          });
-     }
-};
-
 const profileUpdate = async (req, res) => {
      const { profilePic } = req.body;
-     const { email } = req.user
+     console.log(req.userData)
+     const { email } = req.userData
 
      try {
-          await userModel.findOneAndUpdate({ email }, { $set: { profilePic: profilePic } })
+          await userModel.findOneAndUpdate({ email }, { $set: { profilePic } })
           res.status(200).json({
                msg: "Profile Pic Updated"
           })
@@ -109,4 +95,4 @@ const profileUpdate = async (req, res) => {
      }
 }
 
-module.exports = { signup, login, logout, profileUpdate }
+module.exports = { signup, login, profileUpdate }
