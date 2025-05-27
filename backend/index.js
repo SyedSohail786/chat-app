@@ -1,8 +1,9 @@
 const express = require("express")
 const cors = require("cors")
 const cookieParser = require("cookie-parser");
-const { AllRoutes } = require("./src/routes/AllRoutes")
-const { mongoose } = require("mongoose")
+const { mongoose } = require("mongoose");
+const { authRoutes } = require("./src/routes/authRoutes");
+const { messageRoutes } = require("./src/routes/messageRoutes");
 require("dotenv").config()
 
 const app = express()
@@ -14,16 +15,13 @@ app.use(express.json())
 // }));
 
 
-app.use(cors({
-  origin: true,            // allows all origins dynamically
-  credentials: true        // allow sending cookies
-}));
+app.use(cors());
 
+app.use(authRoutes)
+app.use(messageRoutes)
 
-app.use(AllRoutes)
-
-mongoose.connect(process.env.MONGO_LOCAL+"ChatApp")
-     .then(()=>console.log("MONGO-DB ATLAS CONNECTED"))
-app.listen(process.env.PORT,()=>{
+mongoose.connect(process.env.MONGO_LOCAL + "ChatApp")
+     .then(() => console.log("MONGO-DB ATLAS CONNECTED"))
+app.listen(process.env.PORT, () => {
      console.log("SERVER STARTED ON PORT:", process.env.PORT)
 })

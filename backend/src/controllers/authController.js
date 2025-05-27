@@ -1,8 +1,7 @@
 const { userModel } = require("../models/UserModel");
 const bcrypt = require('bcrypt');
 const jwt = require("jsonwebtoken");
-
-
+const { cloudinary } = require("../utils/cloudinary");
 
 const signup = async (req, res) => {
      const { userName, email, password, profilePic } = req.body;
@@ -57,9 +56,9 @@ const login = async (req, res) => {
           const verifyPass = await bcrypt.compare(password, userData.password)
           if (!verifyPass) return res.status(400).json({ code: 12, msg: "Invalid Credentials" })
 
-          const token = jwt.sign({email},process.env.SECRET,{
-          expiresIn:"7d"
-     })
+          const token = jwt.sign({ email }, process.env.SECRET, {
+               expiresIn: "7d"
+          })
           res.status(200).json({
                msg: "Succesfully Logged In",
                profilePic: userData.profilePic,
@@ -80,14 +79,17 @@ const login = async (req, res) => {
 
 const profileUpdate = async (req, res) => {
      const { profilePic } = req.body;
-     console.log(req.userData)
-     const { email } = req.userData
+
+     const { _id } = req.userData
 
      try {
-          await userModel.findOneAndUpdate({ email }, { $set: { profilePic } })
-          res.status(200).json({
-               msg: "Profile Pic Updated"
-          })
+          if (!_id || !profilePic) return res.status(400).json({ msg: "fields are required" })
+          if (!profilePic) return res.status(400).json({ msg: "Profile Pic Required", code: 51 })
+          const uploadRes = await cloudinary.uploader.upload(profilePic)
+
+          const updatedUser = await userModel.findByIdAndUpdate(_id, { profilePic: uploadRes.secure_url }, { new: true })
+
+          res.status(200).json(updatedUser)
      } catch (error) {
           res.send({
                msg: error.message
