@@ -36,7 +36,7 @@ export default function Login() {
                 title="Enter your password"
               />
             </div>
-
+            <p className="text-sm mt-4 text-gray-400">Forgot Password? <a className="cursor-pointer hover:underline text-sm mt-4 text-blue-400" onClick={e=>navigate("/forgot-password")}>Reset</a></p>
             {/* Submit Button */}
             <button
               className="btn btn-neutral btn-outline bg-white text-[#1d232a] w-full mt-2"

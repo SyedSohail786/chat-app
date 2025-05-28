@@ -5,6 +5,7 @@ import Login from "./pages/Login"
 import SignUp from "./pages/SignUp"
 import ProfilePage from "./pages/ProfilePage"
 import SettingPage from "./pages/SettingPage"
+import ForgotPassword from "./components/ForgotPassword"
 
 
 
@@ -21,6 +22,8 @@ function App() {
           <Route path="/signup" element={<SignUp/>}/>
           <Route path="/settings" element={<SettingPage/>}/>
           <Route path="/profile" element={<ProfilePage/>}/>
+          <Route path="/forgot-password" element={<ForgotPassword/>}/>
+
         </Routes>
       </main>
     </div>
