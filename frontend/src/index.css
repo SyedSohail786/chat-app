@@ -31,3 +31,6 @@ html, body, #root {
   background: #888;
   border-radius: 3px;
 }
+.validator-hint {
+  @apply text-sm text-gray-400 leading-tight mt-1;
+}

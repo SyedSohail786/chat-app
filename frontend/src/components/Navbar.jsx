@@ -12,10 +12,10 @@ export default function Navbar() {
       </div>
       
       <div className="flex gap-4 text-md font-semibold">
-        <button className="btn btn-ghost btn-sm" onClick={() => navigate("/")}>Home</button>
-        <button className="btn btn-ghost btn-sm" onClick={() => navigate("/profile")}>Profile</button>
-        <button className="btn btn-ghost btn-sm" onClick={() => navigate("/setting")}>Setting</button>
-        <button className="btn btn-ghost btn-sm">Logout</button>
+        <button className="btn btn-ghost btn-md" onClick={() => navigate("/")}>Home</button>
+        <button className="btn btn-ghost btn-md" onClick={() => navigate("/profile")}>Profile</button>
+        <button className="btn btn-ghost btn-md" onClick={() => navigate("/settings")}>Setting</button>
+        <button className="btn btn-ghost btn-md">Logout</button>
       </div>
     </div>
   )
