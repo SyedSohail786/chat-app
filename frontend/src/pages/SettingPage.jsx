@@ -17,23 +17,14 @@ export default function SettingPage() {
           <h1 className="text-3xl my-2 ">The<span className="text-primary">me's</span></h1>
           <p className="text-sm">Select The Theme You Want</p>
           {/* Themes Section */}
-          <div className="grid grid-cols-4 border rounded-2xl mt-5 p-5">
+          <div className="grid grid-cols-4 border rounded-2xl mt-5 p-2">
             {
               THEMES.map((items, index) => {
                 return (
-                  <button key={index} className={`${theme == items ? "bg-base-300" : "hover:bg-primary"} rounded-2xl transition-colors p-2 capitalize`} onClick={() => setTheme(items)}>
-                    <div className="relative-h-8 w-full rounded-md border overflow-hidden p-1" data-theme={items}>
+                  <button key={index} className={`${theme == items ? "bg-base-300" : "hover:bg-primary"} rounded-2xl transition-colors p-2 capitalize  mr-2 mb-1 gap-2 text-sm`} onClick={() => setTheme(items)}>
+                    <div className="relative h-8 w-full rounded-md border p-2" data-theme={items}>
                       {items}
-                      <div className="absolute grid grid-cols-4  p-1 ">
-                        <div className="rounded bg-primary"></div>
-                        <div className="rounded bg-secondary"></div>
-                        <div className="rounded bg-accent"></div>
-                        <div className="rounded bg-neutral"></div>
-                      </div>
                     </div>
-
-
-
                   </button>
                 )
               })
