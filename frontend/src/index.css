@@ -5,11 +5,7 @@
   themes: all;
 }
 
-@layer base {
-  html {
-    scroll-behavior: smooth;
-  }
-}
+
 
 
 * {
@@ -21,19 +17,15 @@ html, body, #root {
   margin: 0;
   padding: 0;
   height: 100%;
+  
 }
 
-/* Custom scrollbars */
+@layer base {
+     html {
+          scroll-behavior: smooth;
+     }
+}
+
 ::-webkit-scrollbar {
-  width: 6px;
-}
-::-webkit-scrollbar-track {
-  background: #f1f1f1;
-}
-::-webkit-scrollbar-thumb {
-  background: #888;
-  border-radius: 3px;
-}
-.validator-hint {
-  @apply text-sm text-gray-400 leading-tight mt-1;
+     display: none;
 }

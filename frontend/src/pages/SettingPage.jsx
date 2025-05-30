@@ -1,6 +1,7 @@
 import { ThemeSet } from "../store/ThemeStore";
 import { THEMES } from "../Themes/themes";
 import { Send } from "lucide-react";
+import { Sparkles } from 'lucide-react';
 
 export default function SettingPage() {
   const previewMessage = [
@@ -24,12 +25,12 @@ export default function SettingPage() {
             {THEMES.map((item, index) => (
               <button
                 key={index}
-                className={`rounded-xl transition-colors p-1 capitalize ${theme === item ? "bg-base-300" : "hover:bg-primary/20"
+                className={`rounded-xl transition-colors p-1 capitalize ${theme === item ? "bg-secondary" : "hover:bg-primary/20"
                   }`}
                 onClick={() => setTheme(item)}
               >
                 <div className="relative w-full rounded-md border p-2 text-center" data-theme={item}>
-                  {item}
+                  {theme===item? <span>{item} ✔️</span>  : item} 
                 </div>
               </button>
             ))}

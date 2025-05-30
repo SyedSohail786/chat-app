@@ -38,7 +38,7 @@ export default function Navbar() {
   );
 
   return (
-    <div className="w-full bg-base-100 shadow-sm px-5 py-3 flex justify-between items-center">
+    <div className="w-full bg-base-100 shadow-sm px-5 py-3 flex justify-between items-center" >
       {/* Logo Section */}
       <div
         className="text-2xl font-semibold cursor-pointer flex items-center gap-1"
