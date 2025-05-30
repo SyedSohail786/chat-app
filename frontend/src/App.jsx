@@ -6,14 +6,16 @@ import SignUp from "./pages/SignUp"
 import ProfilePage from "./pages/ProfilePage"
 import SettingPage from "./pages/SettingPage"
 import ForgotPassword from "./components/ForgotPassword"
+import { ThemeSet } from "./store/ThemeStore"
 
 
 
 function App() {
   const location = useLocation();
+  const {theme} = ThemeSet()
   
   return (
-    <div className="flex flex-col h-screen">
+    <div className="flex flex-col h-screen" data-theme={theme}>
       <Navbar />
       <main className="flex-1">
         <Routes>

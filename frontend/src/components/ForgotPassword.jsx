@@ -95,7 +95,7 @@ export default function Login() {
 
         <p className="text-center text-sm mt-4 text-gray-400">
           Remember your password?{" "}
-          <a href="/login" className="text-blue-400 hover:underline">
+          <a onClick={e=>navigate("/login")} className="text-blue-400 hover:underline cursor-pointer">
             Log in
           </a>
         </p>
