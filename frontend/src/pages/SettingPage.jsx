@@ -1,7 +1,6 @@
 import { ThemeSet } from "../store/ThemeStore";
 import { THEMES } from "../Themes/themes";
 import { Send } from "lucide-react";
-import { Sparkles } from 'lucide-react';
 
 export default function SettingPage() {
   const previewMessage = [
@@ -74,7 +73,8 @@ export default function SettingPage() {
                   >
                     <p className="text-sm max-sm:text-[10px]">{message.msg}</p>
                     <p
-                      className={`text-[10px] mt-1.5 max-sm:text-[8px] ${message.isSent ? "text-primary-content/70" : "text-base-content/70"
+                      className={`text-[10px] mt-1.5 max-sm:text-[8px] ${message.isSent ? "text-primary-content/70" 
+                        : "text-base-content/70"
                         }`}
                     >
                       12:00 PM
