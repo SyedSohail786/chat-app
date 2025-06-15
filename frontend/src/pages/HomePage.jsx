@@ -10,7 +10,8 @@ export default function HomePage() {
       {/* chat section, right side */}
 
       <div>
-        <div className="py-2 px-2 border-b  flex">
+        {/* Header Section */}
+        <div className="py-2 px-2 border-b flex">
           <img
                 src="https://img.daisyui.com/images/profile/demo/spiderperson@192.webp"
                 className="w-12 rounded-full mx-3 border-2"
@@ -21,7 +22,16 @@ export default function HomePage() {
                   <h1 className="text-[12px]">Online</h1>
               </div>
         </div>
-        
+
+        {/* Chat Section */}
+        <div className="h-130 ">
+
+        </div>
+
+        {/* Chat Input Section */}
+        <div className="max-w-[900px] border py-6 mx-auto rounded-[20px]">
+
+        </div>
 
 
 
