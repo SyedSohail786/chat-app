@@ -6,7 +6,7 @@ export default function AllChats() {
       <h1 className="text-xl text-center py-3">All Chats</h1>
 
       {/* SCROLLABLE CHAT LIST */}
-      <div className="overflow-y-auto h-[80vh] pr-2"> {/* adjust height as needed */}
+      <div className="overflow-y-auto h-[80vh] pr-2 hide-scrollbar"> 
         <ul className="list-none">
           
             <li

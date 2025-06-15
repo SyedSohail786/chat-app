@@ -39,7 +39,7 @@ export default function HomePage() {
 
         {/* Chat Section */}
         <div className="h-130 overflow-hidden">
-          <div className="h-full overflow-y-auto p-5">
+          <div className="h-full overflow-y-auto p-5 hide-scrollbar">
               {previewMessage.map((message) => (
                 <div
                   key={message.id}
