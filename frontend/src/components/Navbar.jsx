@@ -1,6 +1,10 @@
 import React, { useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import { MessageSquareDashed, Menu, X } from "lucide-react";
+import { FaUser } from "react-icons/fa6";
+import { FaRegSun } from "react-icons/fa6";
+import { FaRightToBracket } from "react-icons/fa6";
+import { FaCommentDots } from "react-icons/fa6";
 
 export default function Navbar() {
   const navigate = useNavigate();
@@ -17,22 +21,22 @@ export default function Navbar() {
       {!isAuthPage && (
         <>
           <button onClick={() => navigate("/")} className="btn btn-ghost btn-sm">
-            Home
+            <FaCommentDots />Chat
           </button>
           <button onClick={() => navigate("/profile")} className="btn btn-ghost btn-sm">
-            Profile
+            <FaUser /> Profile
           </button>
         </>
       )}
       <button onClick={() => navigate("/settings")} className="btn btn-ghost btn-sm">
-        Setting
+        <FaRegSun />Setting
       </button>
       {isAuthPage ? (
         <button onClick={() => navigate("/login")} className="btn btn-ghost btn-sm">
           Login
         </button>
       ) : (
-        <button className="btn btn-ghost btn-sm">Logout</button>
+        <button className="btn btn-ghost btn-sm"> <FaRightToBracket /> Logout</button>
       )}
     </>
   );
