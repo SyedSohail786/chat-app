@@ -1,13 +1,16 @@
 import { useNavigate } from "react-router-dom"
 import AuthImagePattern from "../components/AuthImage"
 import Cookies from "js-cookie"
-import { useEffect } from "react"
+import { useEffect, useState } from "react"
 import axios from "axios"
 import toast from "react-hot-toast"
 const apiUrl = import.meta.env.VITE_BACKEND_URL;
 
 export default function SignUp() {
   const navigate = useNavigate()
+  const [step, setStep] = useState(0);
+  const [otp, setOtp] = useState("");
+  const [loadingOTP, setLoadingOTP]= useState(false)
 
   useEffect(() => {
     const token = Cookies.get("chatApp");
@@ -22,15 +25,32 @@ export default function SignUp() {
     const obj = {
       userName: formData.get("userName"),
       email: formData.get("email"),
-      password: formData.get("password")
+      password: formData.get("password"),
+      otp:formData.get("otp") || ""
+
     };
-    axios.post(`${apiUrl}/auth/signup`, obj)
-      .then((res) => {
-        if (res.data.code === 12) return toast.error("User Already Exist")
-        Cookies.set("chatApp", res.data.token)
-        navigate("/")
-        toast.success("Succesfull, Enjoy Chatting")
+    if(step==0){
+      setLoadingOTP(true)
+      axios.post(`${apiUrl}/auth/signup-otp`,obj)
+    .then((res)=>{
+      if(res.data.code==12) return toast.error("User Already Exist");
+      if(res.data.code==200){
+        setLoadingOTP(true)
+        setStep(1)
+        toast.success("OTP Sent Successfully");
+      
+      }
+    })
+    }else{
+      axios.post(`${apiUrl}/auth/signup`,obj)
+      .then((res)=>{
+        if(res.data.code ==76) return toast.error("No OTP Found")
+        if(res.data.code ==77) return toast.error("Invalid OTP")
+        toast.success("Account Created Successfully, Enjoy Chatting");
+      Cookies.set("chatApp", res.data.token)
+        navigate("/");
       })
+    }
 
   }
   return (
@@ -83,10 +103,31 @@ export default function SignUp() {
                 title="Must include number, lowercase and uppercase letter"
               />
             </div>
+            {step >= 1 && (
+          <div>
+            <label className="block mb-1">Enter OTP</label>
+            <input
+            name="otp"
+              type="text"
+              className="input w-full"
+              required
+              placeholder="6-digit OTP"
+              maxLength="6"
+              value={otp}
+              onChange={(e) => setOtp(e.target.value)}
+            />
+          </div>
+        )}
 
             {/* Submit */}
             <button className="btn btn-neutral btn-outline bg-white text-[#1d232a] w-full mt-2" type="submit">
-              Create Account
+              {step==1? "Verify" : loadingOTP?
+               <>
+                    <span className="loading loading-spinner"></span>
+                    Sending OTP
+              </>
+               :
+               "Create Account"}
             </button>
 
             {/* Already have an account */}
