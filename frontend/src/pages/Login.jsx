@@ -1,22 +1,40 @@
 import { useNavigate } from "react-router-dom";
 import AuthImagePattern from "../components/AuthImage";
+import axios from "axios";
+import toast from "react-hot-toast";
 
 export default function Login() {
   const navigate = useNavigate()
+  const handleLogin= async (e)=>{
+    e.preventDefault();
+    const formData =await new FormData(e.target);
+    const obj = {
+    email: formData.get("email"),
+    password: formData.get("password")
+  };
+    axios.post(`http://localhost:8000/auth/login`,obj)
+    .then((res)=>{
+      if (res.data.code==13) toast.error("Invalid Credentials")
+      if (res.data.code==12) toast.error("User not found")
+
+    })
+
+  }
   return (
     <div className="">
-      <div className="grid grid-cols-[30%_auto] gap-[2%] content-start p-5">
+      <div className="grid grid-cols-[30%_auto] max-sm:grid-cols-1 gap-[2%] content-start p-5">
         
         {/* Left side: Login Form */}
         <div className="bg-[#191e24] p-10 rounded-2xl text-white">
           <h1 className="text-2xl py-2 text-center">Log In</h1>
           
-          <form className="space-y-4">
+          <form className="space-y-4" onSubmit={handleLogin}> 
 
             {/* Email */}
             <div>
               <label className="block mb-1">Email</label>
               <input
+                name="email"
                 type="email"
                 className="input w-full"
                 required
@@ -28,6 +46,7 @@ export default function Login() {
             <div>
               <label className="block mb-1">Password</label>
               <input
+                name="password"
                 type="password"
                 className="input w-full"
                 required

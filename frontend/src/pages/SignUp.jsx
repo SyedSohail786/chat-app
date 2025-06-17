@@ -5,7 +5,7 @@ export default function SignUp() {
   const navigate = useNavigate()
   return (
     <div className=''>
-      <div className="grid grid-cols-[30%_auto] gap-[2%] content-start p-5">
+      <div className="grid grid-cols-[30%_auto] max-sm:grid-cols-1 gap-[2%] content-start p-5">
         <div className="bg-[#191e24] p-10 rounded-2xl text-white">
           <h1 className="text-2xl py-2 text-center">Sign Up</h1>
           

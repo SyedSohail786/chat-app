@@ -26,7 +26,7 @@ export default function Login() {
   };
   return (
     <div className="">
-      <div className="grid grid-cols-[30%_auto] gap-[2%] content-start p-5">
+      <div className="grid grid-cols-[30%_auto] max-sm:grid-cols-1 gap-[2%] content-start p-5">
         
         {/* Left side: Login Form */}
         <div className="bg-[#191e24] p-10 rounded-2xl text-white w-full">

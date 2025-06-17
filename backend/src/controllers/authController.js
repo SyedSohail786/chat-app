@@ -52,9 +52,9 @@ const login = async (req, res) => {
 
      try {
           const userData = await userModel.findOne({ email })
-          if (!userData) return res.status(400).json({ code: 12, msg: "User Not Found" })
+          if (!userData) return res.status(201).json({ code: 12, msg: "User Not Found" })
           const verifyPass = await bcrypt.compare(password, userData.password)
-          if (!verifyPass) return res.status(400).json({ code: 12, msg: "Invalid Credentials" })
+          if (!verifyPass) return res.status(201).json({ code: 13, msg: "Invalid Credentials" })
 
           const token = jwt.sign({ email }, process.env.SECRET, {
                expiresIn: "7d"
