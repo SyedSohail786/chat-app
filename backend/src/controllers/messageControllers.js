@@ -8,8 +8,7 @@ const getAllUsers = async (req, res) => {
      const senderId = req.userData._id
      try {
           if (!senderId) return res.status(400).json({ msg: "No Sender ID Found" })
-          const allUsers = await userModel.find({ _id: { $ne: senderId } }).select("-password")
-          console.log(allUsers)
+          const allUsers = await userModel.find({ _id: { $ne: senderId } }).select("-password");
           res.status(200).json({ msg: "Fetched Success", users: allUsers })
 
      } catch (error) {
@@ -17,6 +16,7 @@ const getAllUsers = async (req, res) => {
           res.send({
                msg: error.message
           })
+          console.log(error.message)
      }
 
 }
@@ -40,6 +40,7 @@ const chatWith = async (req, res) => {
           res.send({
                msg: error.message
           })
+          console.log(error.message)
      }
 }
 
@@ -66,6 +67,7 @@ const sendMsg = async (req, res) => {
           res.send({
                msg: error.message
           })
+          console.log(error.message)
      }
 }
 

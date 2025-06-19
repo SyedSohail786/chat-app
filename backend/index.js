@@ -5,6 +5,7 @@ const { mongoose } = require("mongoose");
 const { authRoutes } = require("./src/routes/authRoutes");
 const { messageRoutes } = require("./src/routes/messageRoutes");
 require("dotenv").config()
+const fileUpload =  require("express-fileupload");
 
 const app = express()
 app.use(cookieParser());
@@ -13,7 +14,10 @@ app.use(express.json())
 //   origin: "http://localhost:3000", // Replace with your frontend URL
 //   credentials: true
 // }));
-
+app.use(fileUpload({
+  useTempFiles: true,
+  tempFileDir: "/tmp/", // or any folder for temporary storage
+}));
 
 app.use(cors());
 

@@ -158,16 +158,20 @@ const login = async (req, res) => {
 };
 
 const profileUpdate = async (req, res) => {
-     const { profilePic } = req.body;
+     console.log(req)
+     const { profilePic } = req.files;
+     
 
      const { _id } = req.userData
 
      try {
           if (!_id || !profilePic) return res.status(400).json({ msg: "fields are required" })
           if (!profilePic) return res.status(400).json({ msg: "Profile Pic Required", code: 51 })
-          const uploadRes = await cloudinary.uploader.upload(profilePic)
+          const uploadRes = await cloudinary.uploader.upload(profilePic.tempFilePath, {
+  folder: "chatAppUsers",
+});
 
-          const updatedUser = await userModel.findByIdAndUpdate(_id, { profilePic: uploadRes.secure_url }, { new: true })
+          const updatedUser = await userModel.findByIdAndUpdate(_id, { profilePic: uploadRes.secure_url }, { new: true }).select("-password")
 
           res.status(200).json(updatedUser)
      } catch (error) {

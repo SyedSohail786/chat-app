@@ -2,9 +2,13 @@ import { useNavigate } from "react-router-dom"
 import { Camera, Mail, User } from "lucide-react";
 import { useEffect, useState } from "react";
 import Cookies from "js-cookie";
+import axios from "axios";
+const apiUrl = import.meta.env.VITE_BACKEND_URL;
 
 const ProfilePage = () => {
-const navigate = useNavigate();
+  const navigate = useNavigate();
+  const [users, setUsers] = useState([])
+  const [loadingUsers, setLoadingUsers] = useState(false)
   useEffect(() => {
         const token = Cookies.get("chatApp");
         if (token && token !== "undefined" && token !== "null") {
@@ -14,14 +18,40 @@ const navigate = useNavigate();
         }
       }, []);
 
+      useEffect(()=>{
+        setLoadingUsers(true)
+          const token = Cookies.get("chatApp")
+          axios.get(apiUrl+"/users",{
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        })
+          .then((res)=>{
+          setUsers(res.data.users)
+          setLoadingUsers(false)
+    })
+      },[])
+
 
   const [image, setImage] = useState(null);
 
   const handleImageUpload = (e) => {
     const file = e.target.files[0];
-    if (file) {
-      const url = URL.createObjectURL(file);
-      setImage(url);
+    const token = Cookies.get("chatApp");
+    
+    if (file && token) {
+      const formData = new FormData();
+      formData.append("profilePic", file);
+      axios.put(`${apiUrl}/profile-update`,formData,{
+        headers:{
+          Authorization: `Bearer ${token}`
+         }
+      }).then((res)=>{
+        const url = res.data.profilePic
+        setImage(url);
+      })
+      
+      
     }
   };
 
