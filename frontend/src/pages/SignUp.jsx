@@ -10,49 +10,69 @@ export default function SignUp() {
   const navigate = useNavigate()
   const [step, setStep] = useState(0);
   const [otp, setOtp] = useState("");
-  const [loadingOTP, setLoadingOTP]= useState(false)
+  const [loadingOtpSend, setLoadingOtpSend] = useState(false);
+  const [loadingOtpVerify, setLoadingOtpVerify] = useState(false);
 
   useEffect(() => {
     const token = Cookies.get("chatApp");
-    if (token) {
+    if (token && token !== "undefined" && token !== "null") {
       navigate("/");
     }
-  }, [])
+  }, []);
+
 
   const handleSignup = (e) => {
-    e.preventDefault();
-    const formData = new FormData(e.target);
-    const obj = {
-      userName: formData.get("userName"),
-      email: formData.get("email"),
-      password: formData.get("password"),
-      otp:formData.get("otp") || ""
+  e.preventDefault();
+  const formData = new FormData(e.target);
+  const obj = {
+    userName: formData.get("userName"),
+    email: formData.get("email"),
+    password: formData.get("password"),
+    otp: formData.get("otp") || ""
+  };
 
-    };
-    if(step==0){
-      setLoadingOTP(true)
-      axios.post(`${apiUrl}/auth/signup-otp`,obj)
-    .then((res)=>{
-      if(res.data.code==12) return toast.error("User Already Exist");
-      if(res.data.code==200){
-        setLoadingOTP(true)
-        setStep(1)
-        toast.success("OTP Sent Successfully");
-      
-      }
-    })
-    }else{
-      axios.post(`${apiUrl}/auth/signup`,obj)
-      .then((res)=>{
-        if(res.data.code ==76) return toast.error("No OTP Found")
-        if(res.data.code ==77) return toast.error("Invalid OTP")
-        toast.success("Account Created Successfully, Enjoy Chatting");
-      Cookies.set("chatApp", res.data.token)
-        navigate("/");
-      })
-    }
+  if (step === 0) {
+    setLoadingOtpSend(true);
 
+    axios.post(`${apiUrl}/auth/signup-otp`, obj)
+      .then((res) => {
+        setLoadingOtpSend(false);
+        if (res.data.code === 12) return toast.error("User Already Exist");
+        if (res.data.code === 200) {
+          setStep(1);
+          toast.success("OTP Sent Successfully");
+        }
+      }).catch(() => setLoadingOtpSend(false));
+  } else {
+    setLoadingOtpVerify(true);
+
+    axios.post(`${apiUrl}/auth/signup`, obj)
+      .then((res) => {
+        if (res.data.code === 76) {
+          toast.error("No OTP Found");
+          return setLoadingOtpVerify(false);
+        }
+        if (res.data.code === 77) {
+          toast.error("Invalid OTP");
+          return setLoadingOtpVerify(false);
+        }
+
+        if (res.status === 200) {
+          toast.success("Account Created Successfully, Enjoy Chatting");
+          if (res.data.token) {
+            Cookies.set("chatApp", res.data.token);
+            navigate("/");
+          }
+        } else {
+          toast.error("Something went wrong");
+        }
+      }).catch(() => {
+        setLoadingOtpVerify(false);
+        toast.error("Signup failed");
+      });
   }
+}
+
   return (
     <div className=''>
       <div className="grid grid-cols-[30%_auto] max-sm:grid-cols-1 gap-[2%] content-start p-5">
@@ -120,15 +140,26 @@ export default function SignUp() {
         )}
 
             {/* Submit */}
-            <button className="btn btn-neutral btn-outline bg-white text-[#1d232a] w-full mt-2" type="submit">
-              {step==1? "Verify" : loadingOTP?
-               <>
-                    <span className="loading loading-spinner"></span>
-                    Sending OTP
-              </>
-               :
-               "Create Account"}
+            <button
+                className="btn btn-neutral btn-outline bg-white text-[#1d232a] w-full mt-2"
+                type="submit"
+                disabled={loadingOtpSend || loadingOtpVerify}
+              >
+                {step === 0 && !loadingOtpSend && "Create Account"}
+                {step === 0 && loadingOtpSend && (
+                  <>
+                    Sending OTP <span className="loading loading-spinner"></span>
+                  </>
+                )}
+                {step === 1 && !loadingOtpVerify && "Verify"}
+                {step === 1 && loadingOtpVerify && (
+                  <>
+                    Verifying <span className="loading loading-spinner"></span>
+                  </>
+                )}
             </button>
+
+
 
             {/* Already have an account */}
             <p className="text-center text-sm mt-4 text-gray-400">

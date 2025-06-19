@@ -9,12 +9,12 @@ const apiUrl = import.meta.env.VITE_BACKEND_URL;
 export default function Login() {
   const navigate = useNavigate()
 
-  useEffect(() => {
-    const token = Cookies.get("chatApp");
-    if (token) {
-      navigate("/");
-    }
-  }, [])
+    useEffect(() => {
+      const token = Cookies.get("chatApp");
+      if (token && token !== "undefined" && token !== "null") {
+        navigate("/");
+      }
+    }, []);
 
   const handleLogin = (e) => {
     e.preventDefault();
