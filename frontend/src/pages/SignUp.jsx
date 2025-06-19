@@ -38,10 +38,10 @@ export default function SignUp() {
     axios.post(`${apiUrl}/auth/signup-otp`, obj)
       .then((res) => {
         setLoadingOtpSend(false);
-        if (res.data.code === 12) return toast.error("User Already Exist");
+        if (res.data.code === 12) return toast.error("User Already Exist❗❗");
         if (res.data.code === 200) {
           setStep(1);
-          toast.success("OTP Sent Successfully");
+          toast.success("OTP Sent Successfully✅");
         }
       }).catch(() => setLoadingOtpSend(false));
   } else {
@@ -59,17 +59,17 @@ export default function SignUp() {
         }
 
         if (res.status === 200) {
-          toast.success("Account Created Successfully, Enjoy Chatting");
+          toast.success("Enjoy Chatting✨");
           if (res.data.token) {
             Cookies.set("chatApp", res.data.token);
             navigate("/");
           }
         } else {
-          toast.error("Something went wrong");
+          toast.error("Something went wrong❌");
         }
       }).catch(() => {
         setLoadingOtpVerify(false);
-        toast.error("Signup failed");
+        toast.error("Signup failed❌");
       });
   }
 }

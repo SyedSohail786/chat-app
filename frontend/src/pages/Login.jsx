@@ -25,12 +25,17 @@ export default function Login() {
     };
     axios.post(`${apiUrl}/auth/login`, obj)
       .then((res) => {
-        if (res.data.code == 13) return toast.error("Invalid Credentials")
-        if (res.data.code == 12) return toast.error("User not found")
+        if (res.data.code == 13) return toast.error("Invalid Credentials❌")
+        if (res.data.code == 12) return toast.error("User not found❗")
         if (res.status == 200) {
-          Cookies.set("chatApp", res.data.token)
-          navigate("/")
-          toast.success("Login Successfull")
+          if (res.data.token) {
+            Cookies.set("chatApp", res.data.token)
+            navigate("/")
+            toast.success("Login Successfull✅")
+            }else {
+          toast.error("Something went wrong❗");
+        }
+          
         }
       })
   }

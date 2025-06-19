@@ -15,7 +15,7 @@ const signup = async (req, res) => {
 
           const findOTP = await otpModel.findOne({ email })
           if (!findOTP) return res.status(201).json({ code: 76, message: "No OTP Found" })
-          if( otp != findOTP.otp) return res.status(201).json({ code: 77, message: "Invalid OTP" })
+          if (otp != findOTP.otp) return res.status(201).json({ code: 77, message: "Invalid OTP" })
 
           if (findOTP.otp == otp) {
                const hash = await bcrypt.hash(password, saltRounds)
@@ -29,11 +29,11 @@ const signup = async (req, res) => {
                     await saveRes.save()
 
                     const info = await transporter.sendMail({
-                              from: '"HeyChat" <kusohail70@gmail.com>',
-                              to: `${email}`,
-                              subject: "Welcome to HeyChat!",
-                              text: "Your HeyChat account has been created successfully.",
-                              html: `
+                         from: '"HeyChat" <kusohail70@gmail.com>',
+                         to: `${email}`,
+                         subject: "Welcome to HeyChat!",
+                         text: "Your HeyChat account has been created successfully.",
+                         html: `
                               <!DOCTYPE html>
                               <html>
                                    <head>
@@ -99,7 +99,7 @@ const signup = async (req, res) => {
                                    </body>
                               </html>
                               `
-                              });
+                    });
 
                     res.status(200).json({
                          _id: saveRes._id,
@@ -115,18 +115,11 @@ const signup = async (req, res) => {
                     })
                }
           }
-
-
-
-
-
-
-
-
      } catch (error) {
           res.send({
                msg: error.message
           })
+          console.log(error.message)
      }
 
 
@@ -158,6 +151,7 @@ const login = async (req, res) => {
           res.send({
                msg: error.message
           })
+          console.log(error.message)
      }
 
 
@@ -180,6 +174,7 @@ const profileUpdate = async (req, res) => {
           res.send({
                msg: error.message
           })
+          console.log(error.message)
      }
 }
 
@@ -271,6 +266,7 @@ const signupOTP = async (req, res) => {
           res.send({
                msg: error.message
           })
+          console.log(error.message)
 
      }
 
@@ -278,4 +274,119 @@ const signupOTP = async (req, res) => {
 
 }
 
-module.exports = { signup, login, profileUpdate, signupOTP }
+const forgotPassword = async (req, res) => {
+     try {
+          const { email } = req.body;
+          const user = await userModel.findOne({ email })
+          if (!user) return res.status(201).json({ code: 201, message: "User not found" })
+          const otp = Math.floor(100000 + Math.random() * 900000);
+          const deleteUserOTP = await otpModel.findOneAndDelete({ email })
+          const setOtp = otpModel.create({ email, otp })
+          const info = await transporter.sendMail({
+               from: '"HeyChat" <kusohail70@gmail.com>',
+               to: `${email}`,
+               subject: "Forgot Password",
+               text: "Reset Forgot Password",
+               html: `
+                    <!DOCTYPE html>
+                         <html lang="en">
+                         <head>
+                              <meta charset="UTF-8" />
+                              <title>Password Reset OTP</title>
+                              <style>
+                              body {
+                                   font-family: 'Segoe UI', sans-serif;
+                                   background-color: #f4f4f7;
+                                   margin: 0;
+                                   padding: 0;
+                                   color: #333;
+                              }
+                              .container {
+                                   max-width: 600px;
+                                   margin: 40px auto;
+                                   background-color: #ffffff;
+                                   padding: 30px;
+                                   border-radius: 10px;
+                                   box-shadow: 0 6px 18px rgba(0,0,0,0.1);
+                              }
+                              h2 {
+                                   color: #4f46e5;
+                                   margin-bottom: 10px;
+                              }
+                              .otp-box {
+                                   background-color: #f0f0ff;
+                                   border: 2px dashed #4f46e5;
+                                   padding: 16px;
+                                   text-align: center;
+                                   font-size: 24px;
+                                   font-weight: bold;
+                                   letter-spacing: 4px;
+                                   margin: 20px 0;
+                                   border-radius: 8px;
+                              }
+                              p {
+                                   font-size: 16px;
+                                   line-height: 1.6;
+                              }
+                              .footer {
+                                   font-size: 13px;
+                                   color: #777;
+                                   margin-top: 30px;
+                                   text-align: center;
+                              }
+                              </style>
+                         </head>
+                         <body>
+                              <div class="container">
+                              <h2>Reset Your Password</h2>
+                              <p>Hello, ${user.userName}</p>
+                              <p>We received a request to reset the password for your <strong>HeyChat</strong> account.</p>
+                              <p>Please use the OTP below to reset your password. This OTP is valid for <strong>10 minutes</strong>:</p>
+                              <div class="otp-box">${otp}</div>
+                              <p>If you did not request this, you can safely ignore this email.</p>
+                              <div class="footer">
+                                   <p>— The HeyChat Team</p>
+                                   <p>Need help? Contact us at support@heychat.com</p>
+                              </div>
+                              </div>
+                         </body>
+                         </html>
+
+          `,
+          });
+          return res.status(200).json({
+               msg:"Otp Sent"
+          });
+     } catch (error) {
+          res.send({
+               msg: error.message
+          })
+          console.log(error.message)
+     }
+}
+
+const forgotPasswordOtpCheck = async (req, res) =>{
+     try {
+          const {otp,email,setPasswordDB} = req.body;
+          if(!setPasswordDB){
+          const user = await otpModel.findOne({email})
+          if(!user) return res.status(201).json({code: 202,msg: "No Otp Found"})
+          if(otp !== user.otp) return res.status(201).json({code: 201,msg: "Invalid Otp"})
+          return res.status(200).json({
+           msg: "Otp Verified"
+          })}elseif(setPasswordDB==1){
+               console.log(first)
+
+          }
+
+
+
+     } catch (error) {
+          res.send({
+               msg: error.message
+          })
+          console.log(error.message)
+     }
+}
+
+module.exports = { signup, login, profileUpdate, signupOTP, forgotPassword }

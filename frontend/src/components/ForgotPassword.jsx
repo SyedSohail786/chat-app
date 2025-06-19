@@ -1,6 +1,9 @@
 import { useNavigate } from "react-router-dom";
 import AuthImagePattern from "../components/AuthImage";
 import { useState } from "react";
+import axios from "axios";
+import toast from "react-hot-toast";
+const apiUrl = import.meta.env.VITE_BACKEND_URL;
 
 export default function Login() {
   const navigate = useNavigate()
@@ -12,15 +15,28 @@ export default function Login() {
 
   const handleSubmit = (e) => {
     e.preventDefault();
-
+    const email = e.target.email.value;
+    // const password = e.target.password.value;
+    const otp = e.target.otp.value;
+    // const obj ={email}
     if (step === 1 && email) {
       // TODO: send OTP to email
-      setStep(2);
+      axios.post(`${apiUrl}/auth/forgotPassword`,{email})
+      .then((res)=>{
+        if(res.data.code==201) return toast.error("No user found with this email");
+        if(res.status==200){
+           setStep(2);
+           toast.success("OTP sent to your email");
+        }
+      })
+     
     } else if (step === 2 && otp) {
       // TODO: verify OTP
+      console.log(otp)
       setStep(3);
     } else if (step === 3 && newPassword.length >= 8) {
       // TODO: update password
+      // console.log(password)
       navigate("/login");
     }
   };
@@ -38,6 +54,7 @@ export default function Login() {
           <div>
             <label className="block mb-1">Enter your Email</label>
             <input
+            name="email"
               type="email"
               className="input w-full"
               required
@@ -53,6 +70,7 @@ export default function Login() {
           <div>
             <label className="block mb-1">Enter OTP</label>
             <input
+            name="otp"
               type="text"
               className="input w-full"
               required
@@ -69,6 +87,7 @@ export default function Login() {
           <div>
             <label className="block mb-1">Set New Password</label>
             <input
+            name="password"
               type="password"
               className="input w-full"
               required
