@@ -19,7 +19,7 @@ export default function SignUp() {
       navigate("/");
     }
   }, []);
-  // he
+  // hel
 
 
   const handleSignup = (e) => {
