@@ -367,20 +367,24 @@ const forgotPassword = async (req, res) => {
 
 const forgotPasswordOtpCheck = async (req, res) =>{
      try {
-          const {otp,email,setPasswordDB} = req.body;
-          if(!setPasswordDB){
+          const {otp,email,setPasswordDB,password} = req.body;
+          const saltRounds = 10;
+          if(setPasswordDB==0){
           const user = await otpModel.findOne({email})
+          console.log(user.otp)
           if(!user) return res.status(201).json({code: 202,msg: "No Otp Found"})
-          if(otp !== user.otp) return res.status(201).json({code: 201,msg: "Invalid Otp"})
+          if(otp != user.otp) return res.status(201).json({code: 201,msg: "Invalid Otp"})
+          await otpModel.deleteOne({email})
           return res.status(200).json({
            msg: "Otp Verified"
-          })}elseif(setPasswordDB==1){
-               console.log(first)
-
+          })}
+          else if(setPasswordDB==1){
+               if(password){
+               const hashPass = await bcrypt.hash(password, saltRounds);
+               const setNewPass = await userModel.findOneAndUpdate({email}, {$set:{password:hashPass}}, {new: true})
+               return res.status(200).json({code:100, message:"Password Reset Successfully"})
           }
-
-
-
+          }
      } catch (error) {
           res.send({
                msg: error.message
@@ -389,4 +393,4 @@ const forgotPasswordOtpCheck = async (req, res) =>{
      }
 }
 
-module.exports = { signup, login, profileUpdate, signupOTP, forgotPassword }
+module.exports = { signup, login, profileUpdate, signupOTP, forgotPassword, forgotPasswordOtpCheck }

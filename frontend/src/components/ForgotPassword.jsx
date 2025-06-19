@@ -15,9 +15,9 @@ export default function Login() {
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    const email = e.target.email.value;
-    // const password = e.target.password.value;
-    const otp = e.target.otp.value;
+    setEmail(e.target.email.value)
+    
+    
     // const obj ={email}
     if (step === 1 && email) {
       // TODO: send OTP to email
@@ -33,10 +33,13 @@ export default function Login() {
     } else if (step === 2 && otp) {
       // TODO: verify OTP
       console.log(otp)
+      setOtp(e.target.otp.value)
+      // axios.post(apiUrl+)
       setStep(3);
     } else if (step === 3 && newPassword.length >= 8) {
       // TODO: update password
       // console.log(password)
+      setNewPassword(e.target.password.value)
       navigate("/login");
     }
   };
