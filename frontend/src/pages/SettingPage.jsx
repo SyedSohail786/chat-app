@@ -1,9 +1,22 @@
+import { useEffect } from "react";
+import Cookies from "js-cookie";
 import { ThemeSet } from "../store/ThemeStore";
 import { THEMES } from "../Themes/themes";
 import { Send } from "lucide-react";
+import { useNavigate } from "react-router-dom";
 
 export default function SettingPage() {
-  const previewMessage = [
+  const navigate = useNavigate();
+  useEffect(() => {
+        const token = Cookies.get("chatApp");
+        if (token && token !== "undefined" && token !== "null") {
+          return
+        }else{
+          navigate("/login")
+        }
+      }, []);
+      
+      const previewMessage = [
     { id: 1, msg: "Hey, how are you?", isSent: false },
     { id: 2, msg: "I am good, what about you?", isSent: true }
   ];

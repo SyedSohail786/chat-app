@@ -1,10 +1,23 @@
+import { useNavigate } from "react-router-dom"
 import AllChats from "../components/AllChats";
 import "../index.css"
 import { FaRegImages } from "react-icons/fa6";
 import { Send } from "lucide-react";
+import Cookies from "js-cookie";
+import { useEffect } from "react";
 
 export default function HomePage() {
-   const previewMessage = [
+  const navigate = useNavigate();
+   useEffect(() => {
+         const token = Cookies.get("chatApp");
+         if (token && token !== "undefined" && token !== "null") {
+           return
+         }else{
+           navigate("/login")
+         }
+       }, []);
+
+  const previewMessage = [
     { id: 1, msg: "Hey, how are you?", isSent: false },
     { id: 2, msg: "I am good, what about you?", isSent: true },
     { id: 3, msg: "Hey, how are you?", isSent: true },

@@ -1,6 +1,22 @@
-import React from 'react';
+import axios from 'axios';
+import React, { useEffect, useState } from 'react';
+const apiUrl = import.meta.env.VITE_BACKEND_URL;
+import Cookies from 'js-cookie';
 
 export default function AllChats() {
+  const [users, setUsers] = useState([])
+  useEffect(()=>{
+    const token = Cookies.get("chatApp")
+    axios.get(apiUrl+"/users",{
+    headers: {
+      Authorization: `Bearer ${token}`,
+    },
+  })
+    .then((res)=>{
+      setUsers(res.data.users)
+    })
+  },[])
+
   return (
     <div className="border p-2 rounded-[0px_15px_15px_0px] overflow-hidden h-full">
       <h1 className="text-xl text-center py-3">All Chats</h1>
@@ -8,24 +24,27 @@ export default function AllChats() {
       {/* SCROLLABLE CHAT LIST */}
       <div className="overflow-y-auto h-[80vh] pr-2 hide-scrollbar"> 
         <ul className="list-none">
-          
-            <li
-              
-              className="flex items-center py-2 hover:bg-error hover:text-neutral rounded"
-            >
-              <img
-                src="https://img.daisyui.com/images/profile/demo/spiderperson@192.webp"
-                className="w-10 rounded-full mx-3 border-2"
-                alt="profile"
-              />
-              <div className="w-full flex items-center justify-between px-2">
-                <div className="flex flex-col">
-                  <h1>Syed Sohail</h1>
-                  <h6 className="text-[10px]">Online</h6>
-                </div>
+          {
+            users.map((items,index)=>{
+              return(
+                <li className="flex items-center py-2 hover:bg-error hover:text-neutral rounded" key={index}>
+                  <img
+                    src={items.profilePic || "https://img.daisyui.com/images/profile/demo/spiderperson@192.webp"}
+                    className="w-10 rounded-full mx-3 border-2"
+                    alt="profile"
+                  />
+                  <div className="w-full flex items-center justify-between px-2">
+                    <div className="flex flex-col">
+                      <h1>{items.userName}</h1>
+                    <h6 className="text-[10px]">Online</h6>
+                  </div>
                 <h1 className="text-[10px]">10:11pm</h1>
               </div>
             </li>
+              )
+            })
+          }
+            
           
         </ul>
       </div>

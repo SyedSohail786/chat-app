@@ -1,10 +1,12 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import { MessageSquareDashed, Menu, X } from "lucide-react";
 import { FaUser } from "react-icons/fa6";
 import { FaRegSun } from "react-icons/fa6";
 import { FaRightToBracket } from "react-icons/fa6";
 import { FaCommentDots } from "react-icons/fa6";
+import toast from "react-hot-toast";
+import Cookies from "js-cookie";
 
 export default function Navbar() {
   const navigate = useNavigate();
@@ -15,7 +17,21 @@ export default function Navbar() {
     urlPath.pathname === "/login" ||
     urlPath.pathname === "/signup" ||
     urlPath.pathname === "/forgot-password";
+  
+    useEffect(() => {
+      const token = Cookies.get("chatApp");
+      if (token && token !== "undefined" && token !== "null") {
+        return
+      }else{
+        navigate("/login")
+      }
+    }, []);
 
+    const logout=()=>{
+      Cookies.remove("chatApp");
+      toast.success("You have been logged out")
+      navigate("/login")
+    }
   const navLinks = (
     <>
       {!isAuthPage && (
@@ -36,7 +52,7 @@ export default function Navbar() {
           Login
         </button>
       ) : (
-        <button className="btn btn-ghost btn-sm"> <FaRightToBracket /> Logout</button>
+        <button className="btn btn-ghost btn-sm" onClick={logout}> <FaRightToBracket /> Logout</button>
       )}
     </>
   );

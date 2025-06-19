@@ -1,7 +1,20 @@
+import { useNavigate } from "react-router-dom"
 import { Camera, Mail, User } from "lucide-react";
-import { useState } from "react";
+import { useEffect, useState } from "react";
+import Cookies from "js-cookie";
 
 const ProfilePage = () => {
+const navigate = useNavigate();
+  useEffect(() => {
+        const token = Cookies.get("chatApp");
+        if (token && token !== "undefined" && token !== "null") {
+          return
+        }else{
+          navigate("/login")
+        }
+      }, []);
+
+
   const [image, setImage] = useState(null);
 
   const handleImageUpload = (e) => {

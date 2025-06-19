@@ -10,11 +10,13 @@ export default function Login() {
   const navigate = useNavigate()
 
     useEffect(() => {
-      const token = Cookies.get("chatApp");
-      if (token && token !== "undefined" && token !== "null") {
-        navigate("/");
-      }
-    }, []);
+        const token = Cookies.get("chatApp");
+        if (token && token !== "undefined" && token !== "null") {
+          navigate("/");
+        }else{
+          navigate("/login")
+        }
+      }, []);
 
   const handleLogin = (e) => {
     e.preventDefault();

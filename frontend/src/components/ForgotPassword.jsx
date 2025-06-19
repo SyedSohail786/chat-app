@@ -1,9 +1,10 @@
 import { useNavigate } from "react-router-dom";
 import AuthImagePattern from "../components/AuthImage";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import axios from "axios";
 import toast from "react-hot-toast";
 const apiUrl = import.meta.env.VITE_BACKEND_URL;
+import Cookies from "js-cookie";
 
 export default function Login() {
   const navigate = useNavigate()
@@ -18,7 +19,7 @@ export default function Login() {
       navigate("/");
     }
   }, []);
-//
+
 
   const handleSubmit = (e) => {
     e.preventDefault();
