@@ -382,7 +382,9 @@ const forgotPasswordOtpCheck = async (req, res) =>{
                if(password){
                const hashPass = await bcrypt.hash(password, saltRounds);
                const setNewPass = await userModel.findOneAndUpdate({email}, {$set:{password:hashPass}}, {new: true})
-               return res.status(200).json({code:100, message:"Password Reset Successfully"})
+               return res.status(200).json({message:"Password Reset Successfully"})
+          }else{
+               return res.status(201).json({code: 208,msg: "Somthing went wrong"})
           }
           }
      } catch (error) {
