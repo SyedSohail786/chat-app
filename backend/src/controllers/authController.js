@@ -158,9 +158,8 @@ const login = async (req, res) => {
 };
 
 const profileUpdate = async (req, res) => {
-     console.log(req)
      const { profilePic } = req.files;
-     
+
 
      const { _id } = req.userData
 
@@ -168,8 +167,8 @@ const profileUpdate = async (req, res) => {
           if (!_id || !profilePic) return res.status(400).json({ msg: "fields are required" })
           if (!profilePic) return res.status(400).json({ msg: "Profile Pic Required", code: 51 })
           const uploadRes = await cloudinary.uploader.upload(profilePic.tempFilePath, {
-  folder: "chatAppUsers",
-});
+               folder: "chatAppUsers",
+          });
 
           const updatedUser = await userModel.findByIdAndUpdate(_id, { profilePic: uploadRes.secure_url }, { new: true }).select("-password")
 
@@ -359,7 +358,7 @@ const forgotPassword = async (req, res) => {
           `,
           });
           return res.status(200).json({
-               msg:"Otp Sent"
+               msg: "Otp Sent"
           });
      } catch (error) {
           res.send({
@@ -369,27 +368,28 @@ const forgotPassword = async (req, res) => {
      }
 }
 
-const forgotPasswordOtpCheck = async (req, res) =>{
+const forgotPasswordOtpCheck = async (req, res) => {
      try {
-          const {otp,email,setPasswordDB,password} = req.body;
+          const { otp, email, setPasswordDB, password } = req.body;
           const saltRounds = 10;
-          if(setPasswordDB==0){
-          const user = await otpModel.findOne({email})
-          console.log(user.otp)
-          if(!user) return res.status(201).json({code: 202,msg: "No Otp Found"})
-          if(otp != user.otp) return res.status(201).json({code: 201,msg: "Invalid Otp"})
-          await otpModel.deleteOne({email})
-          return res.status(200).json({
-           msg: "Otp Verified"
-          })}
-          else if(setPasswordDB==1){
-               if(password){
-               const hashPass = await bcrypt.hash(password, saltRounds);
-               const setNewPass = await userModel.findOneAndUpdate({email}, {$set:{password:hashPass}}, {new: true})
-               return res.status(200).json({message:"Password Reset Successfully"})
-          }else{
-               return res.status(201).json({code: 208,msg: "Somthing went wrong"})
+          if (setPasswordDB == 0) {
+               const user = await otpModel.findOne({ email })
+               console.log(user.otp)
+               if (!user) return res.status(201).json({ code: 202, msg: "No Otp Found" })
+               if (otp != user.otp) return res.status(201).json({ code: 201, msg: "Invalid Otp" })
+               await otpModel.deleteOne({ email })
+               return res.status(200).json({
+                    msg: "Otp Verified"
+               })
           }
+          else if (setPasswordDB == 1) {
+               if (password) {
+                    const hashPass = await bcrypt.hash(password, saltRounds);
+                    const setNewPass = await userModel.findOneAndUpdate({ email }, { $set: { password: hashPass } }, { new: true })
+                    return res.status(200).json({ message: "Password Reset Successfully" })
+               } else {
+                    return res.status(201).json({ code: 208, msg: "Somthing went wrong" })
+               }
           }
      } catch (error) {
           res.send({
@@ -399,4 +399,18 @@ const forgotPasswordOtpCheck = async (req, res) =>{
      }
 }
 
-module.exports = { signup, login, profileUpdate, signupOTP, forgotPassword, forgotPasswordOtpCheck }
+const getProfile = async (req, res) => {
+     try {
+          const { _id } = req.userData
+          
+          const user = await userModel.findById(_id).select("-password")
+          if(!user) return res.status(201).json({message:"Invalid User"})
+          res.status(200).json(user)
+     } catch (error) {
+          res.send({
+               msg: error.message
+          })
+          console.log(error.message)
+     }
+}
+module.exports = { signup, login, profileUpdate, signupOTP, forgotPassword, forgotPasswordOtpCheck, getProfile }

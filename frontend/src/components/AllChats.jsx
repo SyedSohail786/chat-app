@@ -20,6 +20,7 @@ export default function AllChats() {
       setLoadingUsers(false)
     })
   },[])
+  
 
   return (
     <div className="border p-2 rounded-[0px_15px_15px_0px] overflow-hidden h-full">
@@ -67,7 +68,7 @@ export default function AllChats() {
                 <li className="flex items-center py-2 hover:bg-error hover:text-neutral rounded" key={index}>
                   <img
                     src={items.profilePic || "https://img.daisyui.com/images/profile/demo/spiderperson@192.webp"}
-                    className="w-10 rounded-full mx-3 border-2"
+                    className="w-10  rounded-full mx-3 border-2"
                     alt="profile"
                   />
                   <div className="w-full flex items-center justify-between px-2">
