@@ -35,9 +35,9 @@ export default function HomePage() {
   return (
     <div className="h-[calc(100vh-4rem)]"> {/* Subtract navbar height */}
       {/* Main content */}
-      <div className="max-w-[1450px] w-full h-full mx-auto flex border rounded overflow-hidden">
+      <div className="max-w-[1450px] w-full h-full mx-auto flex border overflow-hidden">
         {/* Sidebar - visible on desktop, toggleable on mobile */}
-        <div className={`${showChatList ? 'block absolute inset-0 z-40 bg-base-100' : 'hidden'} md:block border-r w-full md:w-[20%] h-full overflow-y-auto`}>
+        <div className={`${showChatList ? 'block absolute inset-0 z-40 bg-base-100' : 'hidden'} md:block w-full md:w-[20%] h-full overflow-y-auto`}>
           <AllChats onSelectChat={() => setShowChatList(false)} />
         </div>
 

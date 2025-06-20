@@ -72,7 +72,7 @@ export default function AllChats({ onSelectChat }) {
               {users.map((user, index) => (
                 <>
                 <li 
-                  className="flex items-center py-2 hover:bg-error hover:text-neutral rounded cursor-pointer transition-colors"
+                  className="flex items-center py-2 hover:bg-error hover:text-neutral rounded transition-colors"
                   key={user._id || index}
                   onClick={() => handleUserClick(user)}
                 >
