@@ -2,11 +2,13 @@ import axios from 'axios';
 import React, { useEffect, useState } from 'react';
 const apiUrl = import.meta.env.VITE_BACKEND_URL;
 import Cookies from 'js-cookie';
+import { allMsgWork } from '../store/messageStore';
 
 export default function AllChats({ onSelectChat }) {
   const [users, setUsers] = useState([]);
   const [loadingUsers, setLoadingUsers] = useState(false);
-  
+  const { setSelectedChat, fetchSelectedChats } = allMsgWork();
+
   useEffect(() => {
     setLoadingUsers(true);
     const token = Cookies.get("chatApp");
@@ -15,32 +17,37 @@ export default function AllChats({ onSelectChat }) {
         Authorization: `Bearer ${token}`,
       },
     })
-    .then((res) => {
-      setUsers(res.data.users);
-      setLoadingUsers(false);
-    })
-    .catch((error) => {
-      console.error("Error fetching users:", error);
-      setLoadingUsers(false);
-    });
+      .then((res) => {
+        setUsers(res.data.users);
+        setLoadingUsers(false);
+      })
+      .catch((error) => {
+        console.error("Error fetching users:", error);
+        setLoadingUsers(false);
+      });
   }, []);
 
   const handleUserClick = (user) => {
-    // Here you would typically:
-    // 1. Set the active chat
-    // 2. Fetch messages for this chat
-    // 3. Close the chat list on mobile if the callback exists
+    
+    setSelectedChat(user)
+    fetchSelectedChats(user._id)
+    
+
+
+
+
     if (onSelectChat) {
       onSelectChat();
     }
   };
+
 
   return (
     <div className="border p-2 rounded-[0px_15px_15px_0px] overflow-hidden h-full bg-base-100">
       {/* Mobile header - only visible on small screens */}
       <div className="md:hidden p-3 border-b flex justify-between items-center">
         <h1 className="text-xl font-semibold">Chats</h1>
-        <button 
+        <button
           onClick={() => onSelectChat && onSelectChat()}
           className="btn btn-sm btn-ghost"
         >
@@ -51,7 +58,7 @@ export default function AllChats({ onSelectChat }) {
       <h1 className="text-xl text-center py-3 hidden md:block">All Chats</h1>
 
       {/* SCROLLABLE CHAT LIST */}
-      <div className="overflow-y-auto h-[calc(100vh-8rem)] md:h-[80vh] pr-2 hide-scrollbar"> 
+      <div className="overflow-y-auto h-[calc(100vh-8rem)] md:h-[80vh] pr-2 hide-scrollbar">
         <ul className="list-none">
           {loadingUsers ? (
             <>
@@ -71,24 +78,24 @@ export default function AllChats({ onSelectChat }) {
             <>
               {users.map((user, index) => (
                 <>
-                <li 
-                  className="flex items-center py-2 hover:bg-error hover:text-neutral rounded transition-colors"
-                  key={user._id || index}
-                  onClick={() => handleUserClick(user)}
-                >
-                  <img
-                    src={user.profilePic || "https://img.daisyui.com/images/profile/demo/spiderperson@192.webp"}
-                    className="w-10 h-10 rounded-full mx-3 border-2"
-                    alt="profile"
-                  />
-                  <div className="w-full flex items-center justify-between px-2">
-                    <div className="flex flex-col">
-                      <h1 className="font-medium">{user.userName}</h1>
-                      <h6 className="text-[10px] text-green-500">Online</h6>
+                  <li
+                    className="flex items-center py-2 hover:bg-error hover:text-neutral rounded transition-colors"
+                    key={index}
+                    onClick={() => handleUserClick(user)}
+                  >
+                    <img
+                      src={user.profilePic || "https://img.daisyui.com/images/profile/demo/spiderperson@192.webp"}
+                      className="w-10 h-10 rounded-full mx-3 border-2"
+                      alt="profile"
+                    />
+                    <div className="w-full flex items-center justify-between px-2">
+                      <div className="flex flex-col">
+                        <h1 className="font-medium">{user.userName}</h1>
+                        <h6 className="text-[10px] text-green-500">Online</h6>
+                      </div>
+                      <h1 className="text-[10px] text-gray-500">10:11pm</h1>
                     </div>
-                    <h1 className="text-[10px] text-gray-500">10:11pm</h1>
-                  </div>
-                </li>
+                  </li>
                 </>
               ))}
             </>

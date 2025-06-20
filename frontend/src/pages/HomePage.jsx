@@ -7,10 +7,13 @@ import { Send } from "lucide-react";
 import Cookies from "js-cookie";
 import { useEffect } from "react";
 import { FiMenu } from "react-icons/fi";
+import { allMsgWork } from '../store/messageStore';
+import { MessageSquare } from "lucide-react";
 
 export default function HomePage() {
   const navigate = useNavigate();
   const [showChatList, setShowChatList] = useState(false);
+  const { selectedChat } = allMsgWork();
 
   useEffect(() => {
     const token = Cookies.get("chatApp");
@@ -18,6 +21,10 @@ export default function HomePage() {
       navigate("/login");
     }
   }, []);
+
+  useEffect(()=>{
+
+  },[selectedChat])
 
   const previewMessage = [
     { id: 1, msg: "Hey, how are you?", isSent: false },
@@ -42,21 +49,24 @@ export default function HomePage() {
         </div>
 
         {/* Right Section */}
+        {
+          selectedChat? 
+        
         <div className={`${showChatList ? 'hidden md:flex' : 'flex'} flex-col flex-1 h-full`}>
           {/* Chat Header with menu button for mobile */}
           <div className="h-16 px-4 flex items-center border-b shrink-0 bg-base-100">
-            <button 
+            <button
               className="md:hidden mr-2 p-1"
               onClick={() => setShowChatList(true)}
             >
               <FiMenu size={24} />
             </button>
             <img
-              src="https://img.daisyui.com/images/profile/demo/spiderperson@192.webp"
+              src={`${selectedChat.profilePic} `}
               className="w-10 h-10 rounded-full border-2 mr-3"
             />
             <div>
-              <h1 className="text-base font-medium">Syed Sohail</h1>
+              <h1 className="text-base font-medium">{selectedChat.userName}</h1>
               <p className="text-xs text-green-500">Online</p>
             </div>
           </div>
@@ -92,6 +102,29 @@ export default function HomePage() {
             </form>
           </div>
         </div>
+        :
+            <div className="w-full flex flex-1 flex-col items-center justify-center p-16 bg-base-100/50">
+      <div className="max-w-md text-center space-y-6">
+        {/* Icon Display */}
+        <div className="flex justify-center gap-4 mb-4">
+          <div className="relative">
+            <div
+              className="w-16 h-16 rounded-2xl bg-primary/10 flex items-center
+             justify-center animate-bounce"
+            >
+              <MessageSquare className="w-8 h-8 text-primary " />
+            </div>
+          </div>
+        </div>
+
+        {/* Welcome Text */}
+        <h2 className="text-2xl font-bold">Welcome to Chatty!</h2>
+        <p className="text-base-content/60">
+          Select a conversation from the sidebar to start chatting
+        </p>
+      </div>
+    </div>
+          }
       </div>
     </div>
   );
