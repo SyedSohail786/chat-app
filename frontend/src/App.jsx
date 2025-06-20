@@ -12,14 +12,13 @@ function App() {
   const location = useLocation();
   const { theme } = ThemeSet();
 
-  // Hide Navbar on auth-related routes (optional)
   const hideNavbar = ["/login", "/signup", "/forgot-password"].includes(location.pathname);
 
   return (
     <div className="min-h-screen flex flex-col bg-base-100" data-theme={theme}>
       {!hideNavbar && <Navbar />}
-      
-      <main className="flex-1 px-2 md:px-4 lg:px-6 py-4">
+
+      <main className={`flex-1 ${!hideNavbar ? "pt-16" : ""} overflow-hidden`}>
         <Routes>
           <Route path="/" element={<HomePage />} />
           <Route path="/login" element={<Login />} />
@@ -32,5 +31,6 @@ function App() {
     </div>
   );
 }
+
 
 export default App;
