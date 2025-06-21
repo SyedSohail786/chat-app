@@ -61,7 +61,7 @@ export default function HomePage() {
     const formData = new FormData();
     formData.append("text", message);
     if (uploadingImage) {
-      formData.append("image", uploadingImage);
+      formData.append("image", uploadingImage); // ✅ This is correct
     }
     axios.post(`${apiurl}/send-msg-to/${selectedChat._id}`, formData, {
       headers: {
@@ -71,7 +71,6 @@ export default function HomePage() {
       .then((res) => {
         console.log(res.data)
         setMessage('');
-        e.target.value = ""
         setImageUrl(null);
         setUploadingImage(null);
       })
@@ -142,6 +141,7 @@ export default function HomePage() {
         </label>
         <form className="flex-1 flex items-center gap-2" onSubmit={handleSending} >
           <input
+            value={message}
             onChange={(e) => setMessage(e.target.value)}
             type="text"
             placeholder="Type a message..."
