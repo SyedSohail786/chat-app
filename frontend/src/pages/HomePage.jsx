@@ -12,6 +12,7 @@ import { FaAngleLeft } from "react-icons/fa6";
 import { X } from 'lucide-react';
 import axios from 'axios';
 import toast from 'react-hot-toast';
+import { useRef } from 'react';
 
 export default function HomePage() {
   const navigate = useNavigate();
@@ -23,6 +24,7 @@ export default function HomePage() {
   const [uploadingImage, setUploadingImage] = useState(null)
   const [messageSend, setMessageSend] = useState('')
   const apiurl = import.meta.env.VITE_BACKEND_URL;
+  const messagesEndRef = useRef(null);
 
   useEffect(() => {
     const token = Cookies.get("chatApp");
@@ -68,6 +70,12 @@ export default function HomePage() {
       });
 
   }
+
+  useEffect(() => {
+  if (messagesEndRef.current) {
+    messagesEndRef.current.scrollIntoView({ behavior: 'smooth' });
+  }
+}, [messages]);
 
 
   const renderChatInterface = () => (
@@ -142,6 +150,7 @@ export default function HomePage() {
                   <span className="loading loading-infinity loading-xl"></span>
                 </div>
               }
+              <div ref={messagesEndRef} />
             </div>
 
 
