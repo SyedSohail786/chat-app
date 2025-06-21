@@ -47,14 +47,13 @@ const chatWith = async (req, res) => {
 const sendMsg = async (req, res) => {
      try {
           const { text } = req.body;
-          let image;
-          if(req.files){
-                image  = req.files;
-          } 
-          
           const receiverId = req.params.id;
           const myId = req.userData._id;
+          let image;
           let imageUrl;
+          if (req.files && req.files.image) {
+               image = req.files.image;
+          }
           if (image) {
                const imageUpload = await cloudinary.uploader.upload(image.tempFilePath, {
                     folder: "chatAppMessages",
@@ -64,11 +63,11 @@ const sendMsg = async (req, res) => {
           const newMessage = new msgModel({
                senderId: myId,
                receiverId,
-               text, image: imageUrl || null
+               text, image: imageUrl
           })
 
           await newMessage.save()
-          res.status(200).json(newMessage)
+          res.status(200).json({ code: 201, newMessage })
      } catch (error) {
           console.log("Error in sendMsg Controller")
           res.send({

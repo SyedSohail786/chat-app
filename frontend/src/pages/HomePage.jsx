@@ -11,6 +11,7 @@ import { useMediaQuery } from 'react-responsive';
 import { FaAngleLeft } from "react-icons/fa6";
 import { X } from 'lucide-react';
 import axios from 'axios';
+import toast from 'react-hot-toast';
 
 export default function HomePage() {
   const navigate = useNavigate();
@@ -61,7 +62,7 @@ export default function HomePage() {
     const formData = new FormData();
     formData.append("text", message);
     if (uploadingImage) {
-      formData.append("image", uploadingImage); // ✅ This is correct
+      formData.append("image", uploadingImage);
     }
     axios.post(`${apiurl}/send-msg-to/${selectedChat._id}`, formData, {
       headers: {
@@ -73,7 +74,10 @@ export default function HomePage() {
         setMessage('');
         setImageUrl(null);
         setUploadingImage(null);
-      })
+      }).catch((err) => {
+        toast.error("Send error");
+        console.log("Send error:", err);
+      });
 
   }
 
