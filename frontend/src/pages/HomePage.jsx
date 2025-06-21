@@ -16,7 +16,7 @@ import toast from 'react-hot-toast';
 export default function HomePage() {
   const navigate = useNavigate();
   const [showChatList, setShowChatList] = useState(false);
-  const { selectedChat, setSelectedChat, messages } = allMsgWork();
+  const { selectedChat, setSelectedChat, messages, loadingChat } = allMsgWork();
   const isMobile = useMediaQuery({ maxWidth: 767 });
   const isTablet = useMediaQuery({ minWidth: 768, maxWidth: 1023 });
   const [imageUrl, setImageUrl] = useState(null)
@@ -34,19 +34,6 @@ export default function HomePage() {
       setShowChatList(true);
     }
   }, [navigate, isMobile, isTablet]);
-
-  const previewMessage = [
-    { id: 1, msg: "Hey, how are you?", isSent: false },
-    { id: 2, msg: "I am good, what about you?", isSent: true },
-    { id: 3, msg: "Same here!", isSent: false },
-    { id: 4, msg: "Let's catch up soon.", isSent: true },
-    { id: 5, msg: "Sure bro.", isSent: false },
-    { id: 6, msg: "Okay.", isSent: true },
-    { id: 7, msg: "Another message", isSent: false },
-    { id: 8, msg: "One more...", isSent: true },
-    { id: 9, msg: "Scrolling test", isSent: false },
-    { id: 10, msg: "Last one", isSent: true },
-  ];
 
   const handleUpload = (e) => {
     const file = e.target.files[0];
@@ -70,11 +57,11 @@ export default function HomePage() {
       }
     })
       .then((res) => {
-        if(res.data.code == 201){
-        setMessageSend('');
-        setImageUrl(null);
-        setUploadingImage(null);
-      }
+        if (res.data.code == 201) {
+          setMessageSend('');
+          setImageUrl(null);
+          setUploadingImage(null);
+        }
       }).catch((err) => {
         toast.error("Send error");
         console.log("Send error:", err);
@@ -84,101 +71,116 @@ export default function HomePage() {
 
 
   const renderChatInterface = () => (
-    <div className="flex flex-col flex-1 h-full">
-      {/* Chat Header with back button */}
-      <div className="h-16 px-4 flex items-center border-b shrink-0 bg-base-100">
-        <button
-          className="mr-2 p-1 md:hidden"
-          onClick={() => setShowChatList(true)}
-        >
-          <FaAngleLeft size={20} />
-        </button>
-        {selectedChat && (
-          <div className='flex justify-between w-full'>
-            <div className='flex'>
-              <img
-                src={selectedChat.profilePic || "https://img.daisyui.com/images/profile/demo/spiderperson@192.webp"}
-                className="w-10 h-10 rounded-full border-2 mr-3"
-                alt="Profile"
-              />
-              <div>
-                <h1 className="text-base font-medium">{selectedChat.userName}</h1>
-                <p className="text-xs text-green-500">Online</p>
-              </div>
-            </div>
-            <div className='flex items-center py-2 px-3 border rounded-xl cursor-pointer' onClick={() => setSelectedChat(null)}>
-              <h1>Close Chat</h1>
-            </div>
-
-          </div>
-        )}
-      </div>
-
-      {/* Scrollable Messages */}
-
-
-      <div className="flex-1 overflow-y-auto px-4 py-2 bg-base-100 space-y-2 ">
-        {
-          messages.length >= 1 ?
-            <>
-              {messages.map((msg) => (
-                <div key={msg._id} className={`flex ${msg.receiverId == selectedChat._id ? "justify-end" : "justify-start"}`}>
-                  <div className={`p-3 max-w-[80%] rounded-xl text-sm shadow-sm border
-              ${msg.receiverId == selectedChat._id ? "bg-primary text-primary-content border-primary" : "bg-base-200 border-base-300"}`}>
-                    {
-                      msg.image ? <img src={msg.image} alt="image-sent" className='w-30 mb-2' /> : ""
-
-                    }
-                    <p>{msg.text}</p>
-                    <p className="text-[10px] mt-1 opacity-70">
-                      {new Date(msg.createdAt).toLocaleTimeString([], {
-                        hour: '2-digit',
-                        minute: '2-digit',
-                        hour12: true
-                      })}
-                    </p>
+    <>
+      {
+        selectedChat != null || selectedChat != undefined ?
+          <div className="flex flex-col flex-1 h-full">
+            {/* Chat Header with back button */}
+            <div className="h-16 px-4 flex items-center border-b shrink-0 bg-base-100">
+              <button
+                className="mr-2 p-1 md:hidden"
+                onClick={() => setShowChatList(true)}
+              >
+                <FaAngleLeft size={20} />
+              </button>
+              {selectedChat && (
+                <div className='flex justify-between w-full'>
+                  <div className='flex'>
+                    <img
+                      src={selectedChat.profilePic || "https://img.daisyui.com/images/profile/demo/spiderperson@192.webp"}
+                      className="w-10 h-10 rounded-full border-2 mr-3"
+                      alt="Profile"
+                    />
+                    <div>
+                      <h1 className="text-base font-medium">{selectedChat.userName}</h1>
+                      <p className="text-xs text-green-500">Online</p>
+                    </div>
                   </div>
+                  <div className='flex items-center py-2 px-3 border rounded-xl cursor-pointer' onClick={() => setSelectedChat(null)}>
+                    <h1>Close Chat</h1>
+                  </div>
+
                 </div>
-              ))}
-            </>
-            :
-            <div className='w-full h-full flex items-center justify-center'>
-              <h1 className='text-center text-lg font-medium'>Say Hi👋 to {selectedChat.userName} </h1>
+              )}
             </div>
-        }
-      </div>
+
+            {/* Scrollable Messages */}
 
 
-      {/* Chat Input */}
-      <div className="h-16 px-4 border-t bg-base-100 flex items-center gap-2 shrink-0 relative">
-        {
-          selectedChat && imageUrl ?
-            <div className=' absolute bottom-18 left-2 w-30' >
+            <div className="flex-1 overflow-y-auto px-4 py-2 bg-base-100 space-y-2 ">
+              {!loadingChat ?
+                <>
+                  {
+                    messages.length >= 1 ?
+                      <>
+                        {messages.map((msg) => (
+                          <div key={msg._id} className={`flex ${msg.receiverId == selectedChat._id ? "justify-end" : "justify-start"}`}>
+                            <div className={`p-3 max-w-[80%] rounded-xl text-sm shadow-sm border
+              ${msg.receiverId == selectedChat._id ? "bg-primary text-primary-content border-primary" : "bg-base-200 border-base-300"}`}>
+                              {
+                                msg.image ? <img src={msg.image} alt="image-sent" className='w-30 mb-2' /> : ""
 
-              <img src={imageUrl} alt="uploaded-image w-30 h-30 relative" />
-              <X className='absolute top-0 right-0 text-black cursor-pointer w-5' onClick={() => setImageUrl(null)} />
+                              }
+                              <p>{msg.text}</p>
+                              <p className="text-[10px] mt-1 opacity-70">
+                                {new Date(msg.createdAt).toLocaleTimeString([], {
+                                  hour: '2-digit',
+                                  minute: '2-digit',
+                                  hour12: true
+                                })}
+                              </p>
+                            </div>
+                          </div>
+                        ))}
+                      </>
+                      :
+                      <div className='w-full h-full flex items-center justify-center'>
+                        <h1 className='text-center text-lg font-medium'>Say Hi👋 to {selectedChat.userName} </h1>
+                      </div>
+                  }
+                </> : <div className="w-full h-full flex items-center justify-center p-16">
+                  <span className="loading loading-infinity loading-xl"></span>
+                </div>
+              }
             </div>
-            : ""
-        }
 
-        <label htmlFor="media-upload" className="cursor-pointer">
-          <input type="file" className="hidden" id="media-upload" accept="image/*" onChange={handleUpload} />
-          <FaRegImages className="text-xl" />
-        </label>
-        <form className="flex-1 flex items-center gap-2" onSubmit={handleSending} >
-          <input
-            value={messageSend}
-            onChange={(e) => setMessageSend(e.target.value)}
-            type="text"
-            placeholder="Type a message..."
-            className="flex-1 px-2 text-sm outline-none bg-transparent"
-          />
-          <button type="submit" className="hover:bg-error p-2 rounded-full text-white bg-primary" disabled={messageSend != "" ? false : true}>
-            <Send size={18} />
-          </button>
-        </form>
-      </div>
-    </div>
+
+            {/* Chat Input */}
+            <div className="h-16 px-4 border-t bg-base-100 flex items-center gap-2 shrink-0 relative">
+              {
+                selectedChat && imageUrl ?
+                  <div className=' absolute bottom-18 left-2 w-30' >
+
+                    <img src={imageUrl} alt="uploaded-image w-30 h-30 relative" />
+                    <X className='absolute top-0 right-0 text-black cursor-pointer w-5' onClick={() => setImageUrl(null)} />
+                  </div>
+                  : ""
+              }
+
+              <label htmlFor="media-upload" className="cursor-pointer">
+                <input type="file" className="hidden" id="media-upload" accept="image/*" onChange={handleUpload} />
+                <FaRegImages className="text-xl" />
+              </label>
+              <form className="flex-1 flex items-center gap-2" onSubmit={handleSending} >
+                <input
+                  value={messageSend}
+                  onChange={(e) => setMessageSend(e.target.value)}
+                  type="text"
+                  placeholder="Type a message..."
+                  className="flex-1 px-2 text-sm outline-none bg-transparent"
+                />
+                <button type="submit" className="hover:bg-error p-2 rounded-full text-white bg-primary" disabled={messageSend != "" ? false : true}>
+                  <Send size={18} />
+                </button>
+              </form>
+            </div>
+          </div>
+          :
+          <div className="w-full flex flex-1 flex-col items-center justify-center p-16 bg-base-100/50">
+            <span className="loading loading-infinity loading-xl"></span>
+          </div>
+      }
+    </>
   );
 
   const renderMobileTabletView = () => {

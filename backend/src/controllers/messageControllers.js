@@ -25,7 +25,6 @@ const chatWith = async (req, res) => {
      try {
           const myId = req.userData._id;
           const receiverId = req.params.id;
-          console.log(receiverId, myId)
           const messages = await msgModel.find({
                $or: [
                     { senderId: myId, receiverId: receiverId },
