@@ -8,7 +8,6 @@ require("dotenv").config()
 
 const signup = async (req, res) => {
      const { userName, email, password, profilePic, otp } = req.body;
-     console.log(req.body)
      const saltRounds = 10;
      try {
 
@@ -374,7 +373,6 @@ const forgotPasswordOtpCheck = async (req, res) => {
           const saltRounds = 10;
           if (setPasswordDB == 0) {
                const user = await otpModel.findOne({ email })
-               console.log(user.otp)
                if (!user) return res.status(201).json({ code: 202, msg: "No Otp Found" })
                if (otp != user.otp) return res.status(201).json({ code: 201, msg: "Invalid Otp" })
                await otpModel.deleteOne({ email })

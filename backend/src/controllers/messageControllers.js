@@ -46,18 +46,25 @@ const chatWith = async (req, res) => {
 
 const sendMsg = async (req, res) => {
      try {
-          const { image, text } = req.body;
+          const { text } = req.body;
+          let image;
+          if(req.files){
+                image  = req.files;
+          } 
+          
           const receiverId = req.params.id;
           const myId = req.userData._id;
           let imageUrl;
           if (image) {
-               const imageUpload = await cloudinary.uploader.upload(image)
+               const imageUpload = await cloudinary.uploader.upload(image.tempFilePath, {
+                    folder: "chatAppMessages",
+               })
                imageUrl = imageUpload.secure_url
           }
           const newMessage = new msgModel({
                senderId: myId,
                receiverId,
-               text, image: imageUrl
+               text, image: imageUrl || null
           })
 
           await newMessage.save()

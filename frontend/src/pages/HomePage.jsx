@@ -5,11 +5,12 @@ import "../index.css";
 import { FaRegImages } from "react-icons/fa6";
 import { Send } from "lucide-react";
 import Cookies from "js-cookie";
-import { FiMenu } from "react-icons/fi";
 import { allMsgWork } from '../store/messageStore';
 import { MessageSquare } from "lucide-react";
 import { useMediaQuery } from 'react-responsive';
 import { FaAngleLeft } from "react-icons/fa6";
+import { X } from 'lucide-react';
+import axios from 'axios';
 
 export default function HomePage() {
   const navigate = useNavigate();
@@ -17,6 +18,10 @@ export default function HomePage() {
   const { selectedChat, setSelectedChat } = allMsgWork();
   const isMobile = useMediaQuery({ maxWidth: 767 });
   const isTablet = useMediaQuery({ minWidth: 768, maxWidth: 1023 });
+  const [imageUrl, setImageUrl] = useState(null)
+  const [uploadingImage, setUploadingImage] = useState(null)
+  const [message, setMessage] = useState('')
+  const apiurl = import.meta.env.VITE_BACKEND_URL;
 
   useEffect(() => {
     const token = Cookies.get("chatApp");
@@ -42,6 +47,39 @@ export default function HomePage() {
     { id: 10, msg: "Last one", isSent: true },
   ];
 
+  const handleUpload = (e) => {
+    const file = e.target.files[0];
+    if (file) {
+      setUploadingImage(file)
+      const imageUrl = URL.createObjectURL(file)
+      setImageUrl(imageUrl)
+    }
+  }
+
+  const handleSending = (e) => {
+    e.preventDefault();
+    const formData = new FormData();
+    formData.append("text", message);
+    if (uploadingImage) {
+      formData.append("image", uploadingImage);
+    }
+    axios.post(`${apiurl}/send-msg-to/${selectedChat._id}`, formData, {
+      headers: {
+        Authorization: `Bearer ${Cookies.get("chatApp")}`
+      }
+    })
+      .then((res) => {
+        console.log(res.data)
+        setMessage('');
+        e.target.value = ""
+        setImageUrl(null);
+        setUploadingImage(null);
+      })
+
+  }
+
+
+
   const renderChatInterface = () => (
     <div className="flex flex-col flex-1 h-full">
       {/* Chat Header with back button */}
@@ -55,26 +93,26 @@ export default function HomePage() {
         {selectedChat && (
           <div className='flex justify-between w-full'>
             <div className='flex'>
-                    <img
-                  src={selectedChat.profilePic || "https://img.daisyui.com/images/profile/demo/spiderperson@192.webp"}
-                  className="w-10 h-10 rounded-full border-2 mr-3"
-                  alt="Profile"
-                />
-                <div>
-                  <h1 className="text-base font-medium">{selectedChat.userName}</h1>
-                  <p className="text-xs text-green-500">Online</p>
-                </div>
+              <img
+                src={selectedChat.profilePic || "https://img.daisyui.com/images/profile/demo/spiderperson@192.webp"}
+                className="w-10 h-10 rounded-full border-2 mr-3"
+                alt="Profile"
+              />
+              <div>
+                <h1 className="text-base font-medium">{selectedChat.userName}</h1>
+                <p className="text-xs text-green-500">Online</p>
+              </div>
             </div>
-            <div className='flex items-center py-2 px-3 border rounded-xl cursor-pointer' onClick={()=>setSelectedChat(null)}>
+            <div className='flex items-center py-2 px-3 border rounded-xl cursor-pointer' onClick={() => setSelectedChat(null)}>
               <h1>Close Chat</h1>
             </div>
-            
+
           </div>
         )}
       </div>
 
       {/* Scrollable Messages */}
-      <div className="flex-1 overflow-y-auto px-4 py-2 bg-base-100 space-y-2">
+      <div className="flex-1 overflow-y-auto px-4 py-2 bg-base-100 space-y-2 ">
         {previewMessage.map((msg) => (
           <div key={msg.id} className={`flex ${msg.isSent ? "justify-end" : "justify-start"}`}>
             <div className={`p-3 max-w-[80%] rounded-xl text-sm shadow-sm border
@@ -87,13 +125,24 @@ export default function HomePage() {
       </div>
 
       {/* Chat Input */}
-      <div className="h-16 px-4 border-t bg-base-100 flex items-center gap-2 shrink-0">
+      <div className="h-16 px-4 border-t bg-base-100 flex items-center gap-2 shrink-0 relative">
+        {
+          selectedChat && imageUrl ?
+            <div className=' absolute bottom-18 left-2 w-30' >
+
+              <img src={imageUrl} alt="uploaded-image w-30 h-30 relative" />
+              <X className='absolute top-0 right-0 text-black cursor-pointer w-5' onClick={() => setImageUrl(null)} />
+            </div>
+            : ""
+        }
+
         <label htmlFor="media-upload" className="cursor-pointer">
-          <input type="file" className="hidden" id="media-upload" />
+          <input type="file" className="hidden" id="media-upload" accept="image/*" onChange={handleUpload} />
           <FaRegImages className="text-xl" />
         </label>
-        <form className="flex-1 flex items-center gap-2">
+        <form className="flex-1 flex items-center gap-2" onSubmit={handleSending} >
           <input
+            onChange={(e) => setMessage(e.target.value)}
             type="text"
             placeholder="Type a message..."
             className="flex-1 px-2 text-sm outline-none bg-transparent"
@@ -117,7 +166,7 @@ export default function HomePage() {
         </div>
       );
     }
-    
+
     return selectedChat ? renderChatInterface() : (
       <div className="w-full flex flex-1 flex-col items-center justify-center p-16 bg-base-100">
         <div className="max-w-md text-center space-y-6">
@@ -129,7 +178,7 @@ export default function HomePage() {
             </div>
           </div>
           <h2 className="text-2xl font-bold">No chat selected</h2>
-          <button 
+          <button
             className="btn btn-primary"
             onClick={() => setShowChatList(true)}
           >
@@ -143,8 +192,8 @@ export default function HomePage() {
   const renderDesktopView = () => (
     <>
       {/* Sidebar - always visible on desktop */}
-      <div className="hidden md:block w-[20%] h-full overflow-y-auto border-r">
-        <AllChats onSelectChat={() => {}} />
+      <div className="hidden md:block w-[20%] h-full overflow-y-auto">
+        <AllChats onSelectChat={() => { }} />
       </div>
 
       {/* Right Section */}

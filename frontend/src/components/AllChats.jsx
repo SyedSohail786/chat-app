@@ -28,10 +28,10 @@ export default function AllChats({ onSelectChat }) {
   }, []);
 
   const handleUserClick = (user) => {
-    
+
     setSelectedChat(user)
     fetchSelectedChats(user._id)
-    
+
 
 
 
@@ -61,43 +61,44 @@ export default function AllChats({ onSelectChat }) {
       <div className="overflow-y-auto h-[calc(100vh-8rem)] md:h-[80vh] pr-2 hide-scrollbar">
         <ul className="list-none">
           {loadingUsers ? (
-            <>
-              {[...Array(5)].map((_, index) => (
-                <div key={index} className="flex w-45 flex-col gap-4 items-center mb-4">
-                  <div className="flex items-center gap-4 w-full p-2">
-                    <div className="skeleton h-10 w-10 shrink-0 rounded-full"></div>
-                    <div className="flex flex-col gap-4 flex-1">
-                      <div className="skeleton h-2 w-20"></div>
-                      <div className="skeleton h-2 w-28"></div>
+            <div >
+              {[...Array(5)].map((_, i) => (
+                <div key={`skeleton-${i}`} className="...">
+                  <div className="flex w-45 flex-col gap-4 items-center mb-4" key={i}>
+                    <div className="flex items-center gap-4 w-full p-2">
+                      <div className="skeleton h-10 w-10 shrink-0 rounded-full"></div>
+                      <div className="flex flex-col gap-4 flex-1">
+                        <div className="skeleton h-2 w-20"></div>
+                        <div className="skeleton h-2 w-28"></div>
+                      </div>
                     </div>
                   </div>
                 </div>
               ))}
-            </>
+            </div>
           ) : (
             <>
-              {users.map((user, index) => (
-                <>
-                  <li
-                    className="flex items-center py-2 hover:bg-error hover:text-neutral rounded transition-colors"
-                    key={index}
-                    onClick={() => handleUserClick(user)}
-                  >
-                    <img
-                      src={user.profilePic || "https://img.daisyui.com/images/profile/demo/spiderperson@192.webp"}
-                      className="w-10 h-10 rounded-full mx-3 border-2"
-                      alt="profile"
-                    />
-                    <div className="w-full flex items-center justify-between px-2">
-                      <div className="flex flex-col">
-                        <h1 className="font-medium">{user.userName}</h1>
-                        <h6 className="text-[10px] text-green-500">Online</h6>
-                      </div>
-                      <h1 className="text-[10px] text-gray-500">10:11pm</h1>
+              {users.map((user) => (
+                <li
+                  key={user._id}
+                  className="flex items-center py-2 hover:bg-error hover:text-neutral rounded transition-colors"
+                  onClick={() => handleUserClick(user)}
+                >
+                  <img
+                    src={user.profilePic || "https://img.daisyui.com/images/profile/demo/spiderperson@192.webp"}
+                    className="w-10 h-10 rounded-full mx-3 border-2"
+                    alt="profile"
+                  />
+                  <div className="w-full flex items-center justify-between px-2">
+                    <div className="flex flex-col">
+                      <h1 className="font-medium">{user.userName}</h1>
+                      <h6 className="text-[10px] text-green-500">Online</h6>
                     </div>
-                  </li>
-                </>
+                    <h1 className="text-[10px] text-gray-500">10:11pm</h1>
+                  </div>
+                </li>
               ))}
+
             </>
           )}
         </ul>
