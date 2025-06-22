@@ -4,11 +4,12 @@ import { useEffect, useState } from "react";
 import Cookies from "js-cookie";
 import axios from "axios";
 import toast from "react-hot-toast";
+import { socketStore } from "../store/socketStore";
 const apiUrl = import.meta.env.VITE_BACKEND_URL;
 
 const ProfilePage = () => {
   const navigate = useNavigate();
-  const [profile, setProfile] = useState(null)
+  const { profile, setProfile } = socketStore()
   const [loadingProfile, setLoadingProfile] = useState(false)
   const [image, setImage] = useState(null);
 
