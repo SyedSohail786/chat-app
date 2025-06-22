@@ -72,10 +72,10 @@ export default function HomePage() {
   }
 
   useEffect(() => {
-  if (messagesEndRef.current) {
-    messagesEndRef.current.scrollIntoView({ behavior: 'smooth' });
-  }
-}, [messages]);
+    if (messagesEndRef.current) {
+      messagesEndRef.current.scrollIntoView({ behavior: 'smooth' });
+    }
+  }, [messages]);
 
 
   const renderChatInterface = () => (

@@ -4,19 +4,20 @@ import axios from "axios";
 import toast from "react-hot-toast";
 import Cookies from "js-cookie";
 import { useEffect } from "react";
+import { socketStore } from "../store/socketStore";
 const apiUrl = import.meta.env.VITE_BACKEND_URL;
 
 export default function Login() {
   const navigate = useNavigate()
-
-    useEffect(() => {
-        const token = Cookies.get("chatApp");
-        if (token && token !== "undefined" && token !== "null") {
-          navigate("/");
-        }else{
-          navigate("/login")
-        }
-      }, []);
+  const { connectSocket } = socketStore()
+  useEffect(() => {
+    const token = Cookies.get("chatApp");
+    if (token && token !== "undefined" && token !== "null") {
+      navigate("/");
+    } else {
+      navigate("/login")
+    }
+  }, []);
 
   const handleLogin = (e) => {
     e.preventDefault();
@@ -33,11 +34,12 @@ export default function Login() {
           if (res.data.token) {
             Cookies.set("chatApp", res.data.token)
             navigate("/")
+            connectSocket()
             toast.success("Login Successfull✅")
-            }else {
-          toast.error("Something went wrong❗");
-        }
-          
+          } else {
+            toast.error("Something went wrong❗");
+          }
+
         }
       })
   }

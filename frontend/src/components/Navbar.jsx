@@ -7,11 +7,13 @@ import { FaRightToBracket } from "react-icons/fa6";
 import { FaCommentDots } from "react-icons/fa6";
 import toast from "react-hot-toast";
 import Cookies from "js-cookie";
+import { socketStore } from "../store/socketStore";
 
 export default function Navbar() {
   const navigate = useNavigate();
   const urlPath = useLocation();
   const [menuOpen, setMenuOpen] = useState(false);
+  const {disconnectSocket} = socketStore();
 
   const isAuthPage =
     urlPath.pathname === "/login" ||
@@ -30,6 +32,7 @@ export default function Navbar() {
     const logout=()=>{
       Cookies.remove("chatApp");
       toast.success("You have been logged out")
+      disconnectSocket()
       navigate("/login")
     }
   const navLinks = (
