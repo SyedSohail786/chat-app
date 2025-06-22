@@ -46,8 +46,6 @@ export default function AllChats({ onSelectChat }) {
       navigate("/login")
     }
   }, []);
-  console.log(onlineUsers)
-  
   
   const handleUserClick = (user) => {
     

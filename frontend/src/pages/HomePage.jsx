@@ -18,7 +18,7 @@ import { socketStore } from '../store/socketStore';
 export default function HomePage() {
   const navigate = useNavigate();
   const [showChatList, setShowChatList] = useState(false);
-  const { selectedChat, setSelectedChat, messages, loadingChat } = allMsgWork();
+  const { selectedChat, setSelectedChat, messages, loadingChat, subscribeMessages } = allMsgWork();
   const isMobile = useMediaQuery({ maxWidth: 767 });
   const isTablet = useMediaQuery({ minWidth: 768, maxWidth: 1023 });
   const [imageUrl, setImageUrl] = useState(null)
@@ -61,10 +61,16 @@ export default function HomePage() {
       }
     })
       .then((res) => {
-        if (res.data.code == 201) {
+        if (res.data.code === 201) {
+          const newMessage = res.data.newMessage; 
           setMessageSend('');
           setImageUrl(null);
           setUploadingImage(null);
+
+          // 🟢 Add this line to show the message instantly to the sender
+          allMsgWork.setState({
+            messages: [...allMsgWork.getState().messages, newMessage]
+          });
         }
       }).catch((err) => {
         toast.error("Send error");
@@ -78,6 +84,9 @@ export default function HomePage() {
       messagesEndRef.current.scrollIntoView({ behavior: 'smooth' });
     }
   }, [messages]);
+  useEffect(() => {
+    subscribeMessages()
+  }, [])
 
 
   const renderChatInterface = () => (
