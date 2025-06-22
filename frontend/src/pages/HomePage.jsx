@@ -13,6 +13,7 @@ import { X } from 'lucide-react';
 import axios from 'axios';
 import toast from 'react-hot-toast';
 import { useRef } from 'react';
+import { socketStore } from '../store/socketStore';
 
 export default function HomePage() {
   const navigate = useNavigate();
@@ -25,6 +26,7 @@ export default function HomePage() {
   const [messageSend, setMessageSend] = useState('')
   const apiurl = import.meta.env.VITE_BACKEND_URL;
   const messagesEndRef = useRef(null);
+  const { onlineUsers } = socketStore()
 
   useEffect(() => {
     const token = Cookies.get("chatApp");
@@ -101,7 +103,7 @@ export default function HomePage() {
                     />
                     <div>
                       <h1 className="text-base font-medium">{selectedChat.userName}</h1>
-                      <p className="text-xs text-green-500">Online</p>
+                      <p className="text-xs text-green-500">{onlineUsers.includes(selectedChat._id) ? "Online" : "Offline"}</p>
                     </div>
                   </div>
                   <div className='flex items-center py-2 px-3 border rounded-xl cursor-pointer' onClick={() => setSelectedChat(null)}>
@@ -124,7 +126,10 @@ export default function HomePage() {
                         {messages.map((msg) => (
                           <div key={msg._id} className={`flex ${msg.receiverId == selectedChat._id ? "justify-end" : "justify-start"}`}>
                             <div className={`p-3 max-w-[80%] rounded-xl text-sm shadow-sm border
-              ${msg.receiverId == selectedChat._id ? "bg-primary text-primary-content border-primary" : "bg-base-200 border-base-300"}`}>
+                            ${msg.receiverId == selectedChat._id ?
+                                "bg-primary text-primary-content border-primary"
+                                :
+                                "bg-base-200 border-base-300"}`}>
                               {
                                 msg.image ? <img src={msg.image} alt="image-sent" className='w-30 mb-2' /> : ""
 

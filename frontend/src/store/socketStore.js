@@ -23,6 +23,7 @@ export const socketStore = create((set,get)=>({
           })
      },
      disconnectSocket:()=>{
+          get().setProfile(null)
           if(get().socket?.connected) get().socket.disconnect()
      }
 }))

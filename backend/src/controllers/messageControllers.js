@@ -1,6 +1,7 @@
 const { msgModel } = require("../models/MsgModel")
 const { userModel } = require("../models/UserModel")
 const { cloudinary } = require("../utils/cloudinary");
+const { getRecieverSocketId, io } = require("../utils/socket");
 
 
 
@@ -66,6 +67,10 @@ const sendMsg = async (req, res) => {
           })
 
           await newMessage.save()
+          const recieverSocketID = getRecieverSocketId(receiverId)
+          if(recieverSocketID){
+               io.to(recieverSocketID).emit("newMessage", newMessage)
+          }
           res.status(200).json({ code: 201, newMessage })
      } catch (error) {
           console.log("Error in sendMsg Controller")

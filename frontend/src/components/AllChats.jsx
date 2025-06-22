@@ -47,14 +47,12 @@ export default function AllChats({ onSelectChat }) {
     }
   }, []);
   console.log(onlineUsers)
+  
+  
   const handleUserClick = (user) => {
-
+    
     setSelectedChat(user)
     fetchSelectedChats(user._id)
-
-
-
-
 
     if (onSelectChat) {
       onSelectChat();

@@ -1,17 +1,24 @@
+const { config } = require("dotenv")
 const express = require("express")
 const http = require("http")
 const { Server } = require("socket.io")
+require("dotenv").config()
 
 const app = express()
 const server = http.createServer(app)
 
 const io = new Server(server, {
      cors: {
-          origin: ['http://localhost:5173'],
+          origin: [process.env.FRONTEND_PATH],
      },
 })
 
 const userMap = {};
+
+const getRecieverSocketId =(userId)=>{
+     return userMap[userId]
+}
+
 io.on("connection", (socket) => {
      console.log("Client connected", socket.id)
      
@@ -27,4 +34,4 @@ io.on("connection", (socket) => {
      })
 })
 
-module.exports = { server, io, app }
+module.exports = { server, io, app, getRecieverSocketId }
