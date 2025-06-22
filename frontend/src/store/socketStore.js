@@ -12,12 +12,15 @@ export const socketStore = create((set,get)=>({
      connectSocket:()=>{
           const socket = io(apiurl,{
                query:{
-                    userId:profile._id
+                    userId:get().profile._id
                }
           })
           if(socket.connected) return;
           socket.connect()
           set({socket})
+          socket.on("getOnlineUsers",(userIds)=>{
+               set({onlineUsers:userIds})
+          })
      },
      disconnectSocket:()=>{
           if(get().socket?.connected) get().socket.disconnect()

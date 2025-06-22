@@ -7,19 +7,13 @@ import ProfilePage from "./pages/ProfilePage";
 import SettingPage from "./pages/SettingPage";
 import ForgotPassword from "./components/ForgotPassword";
 import { ThemeSet } from "./store/ThemeStore";
-import { useEffect } from "react";
-import { socketStore } from "./store/socketStore";
-import Cookies from "js-cookie";
+
+
 
 function App() {
   const location = useLocation();
   const { theme } = ThemeSet();
-  const {connectSocket} = socketStore()
   const hideNavbar = ["/login", "/signup", "/forgot-password"].includes(location.pathname);
-  
-  useEffect(()=>{
-    if(Cookies.get("chatApp")) connectSocket()
-  },[])
 
   return (
     <div className="min-h-screen flex flex-col bg-base-100" data-theme={theme}>

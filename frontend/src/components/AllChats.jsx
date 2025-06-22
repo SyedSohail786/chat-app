@@ -3,12 +3,16 @@ import React, { useEffect, useState } from 'react';
 const apiUrl = import.meta.env.VITE_BACKEND_URL;
 import Cookies from 'js-cookie';
 import { allMsgWork } from '../store/messageStore';
+import { socketStore } from '../store/socketStore';
+import { useNavigate } from 'react-router-dom';
 
 export default function AllChats({ onSelectChat }) {
   const [users, setUsers] = useState([]);
   const [loadingUsers, setLoadingUsers] = useState(false);
   const { setSelectedChat, fetchSelectedChats } = allMsgWork();
-
+  const {onlineUsers, connectSocket, setProfile} = socketStore()
+  const navigate = useNavigate()
+  
   useEffect(() => {
     setLoadingUsers(true);
     const token = Cookies.get("chatApp");
@@ -25,8 +29,24 @@ export default function AllChats({ onSelectChat }) {
         console.error("Error fetching users:", error);
         setLoadingUsers(false);
       });
-  }, []);
 
+    if (token && token !== "undefined" && token !== "null") {
+      const token = Cookies.get("chatApp")
+      axios.get(`${apiUrl}/auth/getProfile`, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      })
+        .then((res) => {
+          setProfile(res.data)
+          if(Cookies.get("chatApp")) connectSocket()
+        })
+
+    } else {
+      navigate("/login")
+    }
+  }, []);
+  console.log(onlineUsers)
   const handleUserClick = (user) => {
 
     setSelectedChat(user)
@@ -92,7 +112,7 @@ export default function AllChats({ onSelectChat }) {
                   <div className="w-full flex items-center justify-between px-2">
                     <div className="flex flex-col">
                       <h1 className="font-medium">{user.userName}</h1>
-                      <h6 className="text-[10px] text-green-500">Online</h6>
+                      <h6 className="text-[10px] text-green-500">{onlineUsers.includes(user._id)? "online": "Offline"}</h6>
                     </div>
                     <h1 className="text-[10px] text-gray-500">10:11pm</h1>
                   </div>
