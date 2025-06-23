@@ -12,6 +12,10 @@ export default function Login() {
   const [email, setEmail] = useState("");
   const [otp, setOtp] = useState("");
   const [newPassword, setNewPassword] = useState("");
+  const [otpSending, setOtpSending] = useState(false)
+  const [verifyingOTP, setVerifyingOTP] = useState(false)
+  const [passwordReset, setPasswordReset] = useState(false)
+
 
   useEffect(() => {
     const token = Cookies.get("chatApp");
@@ -26,38 +30,56 @@ export default function Login() {
     setEmail(e.target.email.value)
 
     if (step === 1 && email) {
+      setOtpSending(true)
       // send OTP to email
       axios.post(`${apiUrl}/auth/forgotPassword`, { email })
         .then((res) => {
-          if (res.data.code == 201) return toast.error("No user found with this email");
+          if (res.data.code == 201){ 
+            setOtpSending(false)
+             toast.error("No user found with this email");
+            }
           if (res.status == 200) {
             setStep(2);
+            setOtpSending(false)
             return toast.success("OTP sent to your email");
           }
         })
 
     } else if (step === 2 && otp) {
       // verify OTP
-
+      setVerifyingOTP(true)
       setOtp(e.target.otp.value)
       axios.post(apiUrl + "/auth/forgotPasswordOtpCheck", { setPasswordDB: 0, email, otp })
         .then((res) => {
-          if (res.data.code == 201) return toast.error("Invalid OTP");
-          if (res.data.code == 202) return toast.error("No OTP Found");
+          if (res.data.code == 201){ 
+            setVerifyingOTP(false)
+             toast.error("Invalid OTP");
+            }
+          if (res.data.code == 202) {
+            setVerifyingOTP(false)
+            toast.error("No OTP Found");
+          }
           if (res.status == 200) {
             setStep(3);
+            setVerifyingOTP(false)
             return toast.success("OTP verified");
           }
         })
 
     } else if (step === 3 && newPassword.length >= 8) {
       //  update password
-
+      setPasswordReset(true)
       setNewPassword(e.target.password.value)
       axios.post(apiUrl + "/auth/forgotPasswordOtpCheck", { setPasswordDB: 1, email, password: newPassword })
         .then((res) => {
-          if (res.data.code == 208) return toast.error("Server Error");
-          if (res.status == 200) return toast.success("Password updated");
+          if (res.data.code == 208){ 
+            setPasswordReset(false)
+             toast.error("Server Error");
+            }
+          if (res.status == 200)  {
+            setPasswordReset(false)
+            toast.success("Password updated");
+          }
         })
 
       navigate("/login");
@@ -129,9 +151,20 @@ export default function Login() {
               className="btn btn-neutral btn-outline bg-white text-[#1d232a] w-full mt-2"
             >
               {step === 1
-                ? "Send OTP"
+                ? otpSending?
+                 <>
+                  Sending OTP <span className="loading loading-spinner"></span>
+                </> : "Send OTP" 
                 : step === 2
-                  ? "Verify OTP"
+                  ?verifyingOTP?
+                  <>
+                  Verifing OTP <span className="loading loading-spinner"></span>
+                  </>
+                   : "Verify OTP"
+                  :passwordReset? 
+                  <>
+                  Just a sec <span className="loading loading-spinner"></span>
+                </>
                   : "Reset Password"}
             </button>
 

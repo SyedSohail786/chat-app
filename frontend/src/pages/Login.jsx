@@ -3,13 +3,15 @@ import AuthImagePattern from "../components/AuthImage";
 import axios from "axios";
 import toast from "react-hot-toast";
 import Cookies from "js-cookie";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { socketStore } from "../store/socketStore";
 const apiUrl = import.meta.env.VITE_BACKEND_URL;
 
 export default function Login() {
   const navigate = useNavigate()
-  const { connectSocket, setProfile } = socketStore()
+  const { connectSocket } = socketStore()
+  const [logging, setLogging] = useState(false)
+
   useEffect(() => {
     const token = Cookies.get("chatApp");
     if (token && token !== "undefined" && token !== "null") {
@@ -21,6 +23,7 @@ export default function Login() {
 
   const handleLogin = (e) => {
     e.preventDefault();
+    setLogging(true)
     const formData = new FormData(e.target);
     const obj = {
       email: formData.get("email"),
@@ -28,10 +31,17 @@ export default function Login() {
     };
     axios.post(`${apiUrl}/auth/login`, obj)
       .then((res) => {
-        if (res.data.code == 13) return toast.error("Invalid Credentials❌")
-        if (res.data.code == 12) return toast.error("User not found❗")
+        if (res.data.code == 13)  {
+          setLogging(false)
+          toast.error("Invalid Credentials❌")
+        }
+        if (res.data.code == 12) {
+          setLogging(false) 
+          toast.error("User not found❗")
+        }
         if (res.status == 200) {
           if (res.data.token) {
+            setLogging(false) 
             Cookies.set("chatApp", res.data.token)
             navigate("/")
             connectSocket()
@@ -85,7 +95,12 @@ export default function Login() {
               className="btn btn-neutral btn-outline bg-white text-[#1d232a] w-full mt-2"
               type="submit"
             >
-              Log In
+              {
+                logging? <>
+                  Logging In <span className="loading loading-spinner"></span>
+                </> : "Log In"
+              }
+              
             </button>
 
             {/* Don't have an account */}
