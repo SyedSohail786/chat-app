@@ -11,21 +11,20 @@ const { app, server } = require("./src/utils/socket");
 
 app.use(cookieParser());
 app.use(express.json())
-// app.use(cors({
-//   origin: "http://localhost:3000", // Replace with your frontend URL
-//   credentials: true
-// }));
+app.use(cors({
+  origin: process.env.FRONTEND_PATH, 
+  credentials: true
+}));
 app.use(fileUpload({
      useTempFiles: true,
-     tempFileDir: "/tmp/", // or any folder for temporary storage
+     tempFileDir: "/tmp/", 
 }));
 
-app.use(cors({ origin: true, credentials: true }));
 
 app.use(authRoutes)
 app.use(messageRoutes)
 
-mongoose.connect(process.env.MONGO_LOCAL + "ChatApp")
+mongoose.connect(process.env.MONGO_ATLAS)
      .then(() => console.log("MONGO-DB ATLAS CONNECTED"))
 server.listen(process.env.PORT, () => {
      console.log("SERVER STARTED ON PORT:", process.env.PORT)

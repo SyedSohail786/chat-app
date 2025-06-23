@@ -5,6 +5,7 @@ import Cookies from 'js-cookie';
 import { allMsgWork } from '../store/messageStore';
 import { socketStore } from '../store/socketStore';
 import { useNavigate } from 'react-router-dom';
+import { MessageCircle } from 'lucide-react';
 
 export default function AllChats({ onSelectChat }) {
   const [users, setUsers] = useState([]);
@@ -54,11 +55,20 @@ export default function AllChats({ onSelectChat }) {
           ✕
         </button>
       </div>
-
-      <h1 className="text-xl text-center py-3 hidden md:block">All Chats</h1>
+      <div className=' flex items-center justify-center'>
+          
+          <h1 className="text-xl text-center py-3 hidden md:block mr-2"> All Chats </h1>
+          <MessageCircle className='hidden md:block' />
+      </div>
+      
 
       {/* SCROLLABLE CHAT LIST */}
       <div className="overflow-y-auto h-[calc(100vh-8rem)] md:h-[80vh] pr-2 hide-scrollbar">
+
+        {
+          users.length ==0 ?<div className=' h-full flex items-center justify-center '> 
+            <h1 className=' text-center '>No Users Found</h1>
+          </div> :
         <ul className="list-none">
           {loadingUsers ? (
             <div >
@@ -102,6 +112,8 @@ export default function AllChats({ onSelectChat }) {
             </>
           )}
         </ul>
+        
+        }
       </div>
     </div>
   );

@@ -6,8 +6,9 @@ const { getRecieverSocketId, io } = require("../utils/socket");
 
 
 const getAllUsers = async (req, res) => {
-     const senderId = req.userData._id
+     
      try {
+          const senderId = req.userData._id
           if (!senderId) return res.status(400).json({ msg: "No Sender ID Found" })
           const allUsers = await userModel.find({ _id: { $ne: senderId } }).select("-password");
           res.status(200).json({ msg: "Fetched Success", users: allUsers })
