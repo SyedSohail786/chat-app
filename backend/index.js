@@ -17,10 +17,7 @@ app.use(fileUpload({
      tempFileDir: "/tmp/", 
 }));
 
-app.use(cors({
-  origin: process.env.FRONTEND_PATH, 
-  credentials: true
-}));
+app.use(cors());
 app.use(authRoutes)
 app.use(messageRoutes)
 
