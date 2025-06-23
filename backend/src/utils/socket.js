@@ -8,10 +8,12 @@ const app = express()
 const server = http.createServer(app)
 
 const io = new Server(server, {
-     cors: {
-          origin: [process.env.FRONTEND_PATH],
-     },
-})
+  cors: {
+    origin: process.env.FRONTEND_PATH,
+    methods: ["GET", "POST"], // ✅ important
+    credentials: true,        // ✅ allows cookies/token if needed
+  },
+});
 
 const userMap = {};
 
