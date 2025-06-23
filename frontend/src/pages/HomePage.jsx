@@ -62,15 +62,17 @@ export default function HomePage() {
     })
       .then((res) => {
         if (res.data.code === 201) {
-          const newMessage = res.data.newMessage; 
+          const newMessage = res.data.newMessage;
           setMessageSend('');
           setImageUrl(null);
           setUploadingImage(null);
+          const state = allMsgWork.getState();
+          const currentMessages = Array.isArray(state.messages) ? state.messages : [];
 
-          // 🟢 Add this line to show the message instantly to the sender
           allMsgWork.setState({
-            messages: [...allMsgWork.getState().messages, newMessage]
+            messages: [...currentMessages, newMessage]
           });
+
         }
       }).catch((err) => {
         toast.error("Send error");
@@ -133,7 +135,7 @@ export default function HomePage() {
                     messages.length >= 1 ?
                       <>
                         {messages.map((msg) => (
-                          <div key={msg._id} className={`flex ${msg.receiverId == selectedChat._id ? "justify-end" : "justify-start"}`}>
+                          <div key={`${msg._id || Math.random().toString(36).substr(2)}-${msg.createdAt}`} className={`flex ${msg.receiverId == selectedChat._id ? "justify-end" : "justify-start"}`}>
                             <div className={`p-3 max-w-[80%] rounded-xl text-sm shadow-sm border
                             ${msg.receiverId == selectedChat._id ?
                                 "bg-primary text-primary-content border-primary"

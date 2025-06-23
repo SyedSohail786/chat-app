@@ -5,7 +5,7 @@ import Cookies from 'js-cookie';
 import { socketStore } from "./socketStore";
 
 
-export const allMsgWork = create((set,get) => ({
+export const allMsgWork = create((set, get) => ({
      selectedChat: null,
      setSelectedChat: (user) => set({ selectedChat: user }),
      loadingChat: false,
@@ -24,12 +24,14 @@ export const allMsgWork = create((set,get) => ({
                     set({ loadingChat: false })
                })
      },
-     subscribeMessages:()=>{
-          const {selectedChat} = get()
-          if(!selectedChat) return; 
+     subscribeMessages: () => {
+          const { selectedChat } = get()
+          if (!selectedChat) return;
           const socket = socketStore.getState().socket;
-          socket.on("newMessage", (newMessage)=>{
-               set({messages:[...get().messages, newMessage]})
+          socket.on("newMessage", (newMessage) => {
+               const existingMessages = get().messages || [];
+               set({ messages: [...existingMessages, newMessage] });
+
           })
      },
 
