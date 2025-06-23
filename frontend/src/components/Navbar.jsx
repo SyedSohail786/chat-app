@@ -39,15 +39,18 @@ export default function Navbar() {
     <>
       {!isAuthPage && (
         <>
-          <button onClick={() => navigate("/")} className="btn btn-ghost btn-sm">
+          <button onClick={() =>{setMenuOpen(!menuOpen)
+             navigate("/")}} className="btn btn-ghost btn-sm">
             <FaCommentDots />Chat
           </button>
-          <button onClick={() => navigate("/profile")} className="btn btn-ghost btn-sm">
+          <button onClick={() => {setMenuOpen(!menuOpen)
+            navigate("/profile")}} className="btn btn-ghost btn-sm">
             <FaUser /> Profile
           </button>
         </>
       )}
-      <button onClick={() => navigate("/settings")} className="btn btn-ghost btn-sm">
+      <button onClick={() => {setMenuOpen(!menuOpen)
+        navigate("/settings")}} className="btn btn-ghost btn-sm">
         <FaRegSun />Setting
       </button>
       {isAuthPage ? (

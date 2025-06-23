@@ -1,6 +1,7 @@
 const express = require("express")
 const http = require("http")
 const { Server } = require("socket.io")
+const { userModel } = require("../models/UserModel")
 require("dotenv").config()
 
 const app = express()
@@ -18,14 +19,20 @@ const getRecieverSocketId = (userId) => {
      return userMap[userId]
 }
 
-io.on("connection", (socket) => {
+io.on("connection",  (socket) => {
      const userId = socket.handshake.query.userId;
      if (userId) userMap[userId] = socket.id;
+     
 
      io.emit("getOnlineUsers", Object.keys(userMap));
 
-     socket.on("disconnect", () => {
+     socket.on("disconnect", async() => {
           delete userMap[userId];
+          if(userId){
+          await userModel.findByIdAndUpdate(userId,{
+               lastSeen:new Date()
+          })
+     }
           io.emit("getOnlineUsers", Object.keys(userMap));
      })
 })

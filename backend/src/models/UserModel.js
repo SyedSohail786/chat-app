@@ -18,6 +18,10 @@ const userSchema = new mongoose.Schema({
           type: String,
           required: true,
           minlength: 8
+     },
+     lastSeen: {
+          type: Date,
+          default: new Date()
      }
 }, {
      timestamps: true

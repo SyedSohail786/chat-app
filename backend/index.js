@@ -11,16 +11,16 @@ const { app, server } = require("./src/utils/socket");
 
 app.use(cookieParser());
 app.use(express.json())
-app.use(cors({
-  origin: process.env.FRONTEND_PATH, 
-  credentials: true
-}));
+
 app.use(fileUpload({
      useTempFiles: true,
      tempFileDir: "/tmp/", 
 }));
 
-
+app.use(cors({
+  origin: process.env.FRONTEND_PATH, 
+  credentials: true
+}));
 app.use(authRoutes)
 app.use(messageRoutes)
 

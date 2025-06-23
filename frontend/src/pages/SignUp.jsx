@@ -30,7 +30,8 @@ export default function SignUp() {
       userName: formData.get("userName"),
       email: formData.get("email"),
       password: formData.get("password"),
-      otp: formData.get("otp") || ""
+      otp: formData.get("otp") || "",
+      lastSeen:new Date()
     };
 
     if (step === 0) {

@@ -7,7 +7,7 @@ const { otpModel } = require("../models/OtpModel");
 require("dotenv").config()
 
 const signup = async (req, res) => {
-     const { userName, email, password, profilePic, otp } = req.body;
+     const { userName, email, password, profilePic, otp, lastSeen } = req.body;
      const saltRounds = 10;
      try {
 
@@ -18,7 +18,7 @@ const signup = async (req, res) => {
 
           if (findOTP.otp == otp) {
                const hash = await bcrypt.hash(password, saltRounds)
-               const userData = { userName, password: hash, email, profilePic }
+               const userData = { userName, password: hash, email, profilePic, lastSeen }
                const saveRes = new userModel(userData)
                const deleteOTP = await otpModel.deleteOne({ email })
                if (saveRes) {

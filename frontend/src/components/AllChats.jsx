@@ -67,7 +67,7 @@ export default function AllChats({ onSelectChat }) {
 
         {
           users.length ==0 ?<div className=' h-full flex items-center justify-center '> 
-            <h1 className=' text-center '>No Users Found</h1>
+            <span className="loading loading-infinity loading-xl"></span>
           </div> :
         <ul className="list-none">
           {loadingUsers ? (
