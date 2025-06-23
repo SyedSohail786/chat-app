@@ -10,7 +10,7 @@ export default function AllChats({ onSelectChat }) {
   const [users, setUsers] = useState([]);
   const [loadingUsers, setLoadingUsers] = useState(false);
   const { setSelectedChat, fetchSelectedChats } = allMsgWork();
-  const {onlineUsers, connectSocket, setProfile} = socketStore()
+  const {onlineUsers, setProfile} = socketStore()
   const navigate = useNavigate()
   
   useEffect(() => {
@@ -29,22 +29,6 @@ export default function AllChats({ onSelectChat }) {
         console.error("Error fetching users:", error);
         setLoadingUsers(false);
       });
-
-    if (token && token !== "undefined" && token !== "null") {
-      const token = Cookies.get("chatApp")
-      axios.get(`${apiUrl}/auth/getProfile`, {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      })
-        .then((res) => {
-          setProfile(res.data)
-          if(Cookies.get("chatApp")) connectSocket()
-        })
-
-    } else {
-      navigate("/login")
-    }
   }, []);
   
   const handleUserClick = (user) => {

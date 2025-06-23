@@ -7,7 +7,10 @@ import { socketStore } from "./socketStore";
 
 export const allMsgWork = create((set, get) => ({
      selectedChat: null,
-     setSelectedChat: (user) => set({ selectedChat: user }),
+     setSelectedChat: (user) => {
+          set({ selectedChat: user });
+          get().subscribeMessages(); // 🧠 add this to ensure socket is always listening
+     },
      loadingChat: false,
      messages: [],
      fetchSelectedChats: (id) => {
@@ -25,15 +28,18 @@ export const allMsgWork = create((set, get) => ({
                })
      },
      subscribeMessages: () => {
-          const { selectedChat } = get()
-          if (!selectedChat) return;
+          const { selectedChat } = get();
           const socket = socketStore.getState().socket;
-          socket.on("newMessage", (newMessage) => {
-               const existingMessages = get().messages || [];
-               set({ messages: [...existingMessages, newMessage] });
+          if (!socket || !selectedChat) return;
 
-          })
-     },
+          socket.off("newMessage"); // Remove old listener
+          socket.on("newMessage", (newMessage) => {
+               const currentMessages = get().messages;
+               const existingMessages = Array.isArray(currentMessages) ? currentMessages : [];
+               set({ messages: [...existingMessages, newMessage] });
+          });
+     }
+
 
 
 }))

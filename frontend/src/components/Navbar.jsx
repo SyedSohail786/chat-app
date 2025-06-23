@@ -13,7 +13,7 @@ export default function Navbar() {
   const navigate = useNavigate();
   const urlPath = useLocation();
   const [menuOpen, setMenuOpen] = useState(false);
-  const {disconnectSocket} = socketStore();
+  const {disconnectSocket, connectSocket} = socketStore();
 
   const isAuthPage =
     urlPath.pathname === "/login" ||
@@ -23,7 +23,7 @@ export default function Navbar() {
     useEffect(() => {
       const token = Cookies.get("chatApp");
       if (token && token !== "undefined" && token !== "null") {
-        return
+         connectSocket()
       }else{
         navigate("/login")
       }

@@ -9,7 +9,7 @@ const apiUrl = import.meta.env.VITE_BACKEND_URL;
 
 export default function Login() {
   const navigate = useNavigate()
-  const { connectSocket } = socketStore()
+  const { connectSocket, setProfile } = socketStore()
   useEffect(() => {
     const token = Cookies.get("chatApp");
     if (token && token !== "undefined" && token !== "null") {
@@ -41,6 +41,7 @@ export default function Login() {
           }
 
         }
+        
       })
   }
   return (

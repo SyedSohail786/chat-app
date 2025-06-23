@@ -20,7 +20,7 @@ app.use(fileUpload({
      tempFileDir: "/tmp/", // or any folder for temporary storage
 }));
 
-app.use(cors());
+app.use(cors({ origin: true, credentials: true }));
 
 app.use(authRoutes)
 app.use(messageRoutes)

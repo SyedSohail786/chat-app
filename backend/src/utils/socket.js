@@ -1,4 +1,3 @@
-const { config } = require("dotenv")
 const express = require("express")
 const http = require("http")
 const { Server } = require("socket.io")
@@ -15,21 +14,25 @@ const io = new Server(server, {
 
 const userMap = {};
 
-const getRecieverSocketId =(userId)=>{
+const getRecieverSocketId = (userId) => {
      return userMap[userId]
 }
 
 io.on("connection", (socket) => {
-     console.log("Client connected", socket.id)
-     
+
+     console.log("Client connected ", socket.id)
+
      const userId = socket.handshake.query.userId;
-     if(userId) userMap[userId] = socket.id;
+     if (userId) userMap[userId] = socket.id;
+     console.log(userMap)
 
      io.emit("getOnlineUsers", Object.keys(userMap));
-     
+
      socket.on("disconnect", () => {
           console.log("Client disconnected", socket.id)
+          console.log(userMap)
           delete userMap[userId];
+          
           io.emit("getOnlineUsers", Object.keys(userMap));
      })
 })

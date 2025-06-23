@@ -39,6 +39,7 @@ export default function HomePage() {
     }
   }, [navigate, isMobile, isTablet]);
 
+  //image sending
   const handleUpload = (e) => {
     const file = e.target.files[0];
     if (file) {
@@ -47,7 +48,7 @@ export default function HomePage() {
       setImageUrl(imageUrl)
     }
   }
-
+  //text sending
   const handleSending = (e) => {
     e.preventDefault();
     const formData = new FormData();
@@ -62,16 +63,16 @@ export default function HomePage() {
     })
       .then((res) => {
         if (res.data.code === 201) {
-          const newMessage = res.data.newMessage;
+          // const newMessage = res.data.newMessage;
           setMessageSend('');
           setImageUrl(null);
           setUploadingImage(null);
-          const state = allMsgWork.getState();
-          const currentMessages = Array.isArray(state.messages) ? state.messages : [];
+          // const state = allMsgWork.getState();
+          // const currentMessages = Array.isArray(state.messages) ? state.messages : [];
 
-          allMsgWork.setState({
-            messages: [...currentMessages, newMessage]
-          });
+          // allMsgWork.setState({
+          //   messages: [...currentMessages, newMessage]
+          // });
 
         }
       }).catch((err) => {
@@ -81,11 +82,13 @@ export default function HomePage() {
 
   }
 
+  //msg auto scroll to bottom
   useEffect(() => {
     if (messagesEndRef.current) {
       messagesEndRef.current.scrollIntoView({ behavior: 'smooth' });
     }
   }, [messages]);
+  
   useEffect(() => {
     subscribeMessages()
   }, [])

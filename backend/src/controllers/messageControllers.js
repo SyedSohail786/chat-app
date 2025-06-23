@@ -68,8 +68,12 @@ const sendMsg = async (req, res) => {
 
           await newMessage.save()
           const recieverSocketID = getRecieverSocketId(receiverId)
-          if(recieverSocketID){
+          const senderSocketID = getRecieverSocketId(myId);
+          if (recieverSocketID) {
                io.to(recieverSocketID).emit("newMessage", newMessage)
+          }
+          if (senderSocketID) {
+               io.to(senderSocketID).emit("newMessage", newMessage);
           }
           res.status(200).json({ code: 201, newMessage })
      } catch (error) {
