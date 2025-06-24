@@ -15,7 +15,7 @@ export default function Navbar() {
   const urlPath = useLocation();
   const [menuOpen, setMenuOpen] = useState(false);
   const {disconnectSocket, connectSocket} = socketStore();
-  const {selectedChat} = allMsgWork()
+  const {setSelectedChat} = allMsgWork()
   const isAuthPage =
     urlPath.pathname === "/login" ||
     urlPath.pathname === "/signup" ||
@@ -32,6 +32,7 @@ export default function Navbar() {
 
     const logout=()=>{
       Cookies.remove("chatApp");
+      setSelectedChat(null)
       toast.success("You have been logged out")
       disconnectSocket()
       navigate("/login")
