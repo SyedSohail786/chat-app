@@ -185,7 +185,9 @@ export default function HomePage({ hideNavbarSetter }) {
   const renderDesktopView = () => (
     <>
       <div className="hidden md:block w-[20%] h-full overflow-y-auto">
-        <AllChats onSelectChat={() => { }} />
+        <AllChats onSelectChat={() => { 
+          disconnectSocket();
+            connectSocket();}} />
       </div>
       {selectedChat ? renderChatInterface() : (
         <div className="w-full flex flex-1 flex-col items-center justify-center p-16 bg-base-100/50">
