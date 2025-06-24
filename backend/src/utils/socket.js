@@ -23,18 +23,19 @@ const getRecieverSocketId = (userId) => {
 
 io.on("connection",  (socket) => {
      const userId = socket.handshake.query.userId;
+     if(!userId) console.log("No ID")
      if (userId) userMap[userId] = socket.id;
      
 
      io.emit("getOnlineUsers", Object.keys(userMap));
 
      socket.on("disconnect", async() => {
-          delete userMap[userId];
+          
           if(userId){
           await userModel.findByIdAndUpdate(userId,{
                lastSeen:new Date()
           })
-     }
+     }    delete userMap[userId];
           io.emit("getOnlineUsers", Object.keys(userMap));
      })
 })

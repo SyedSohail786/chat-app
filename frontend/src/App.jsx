@@ -1,4 +1,5 @@
 import { Route, Routes, useLocation } from "react-router-dom";
+import { useState } from "react"; // ⬅️ Add this
 import Navbar from "./components/Navbar";
 import HomePage from "./pages/HomePage";
 import Login from "./pages/Login";
@@ -8,20 +9,21 @@ import SettingPage from "./pages/SettingPage";
 import ForgotPassword from "./components/ForgotPassword";
 import { ThemeSet } from "./store/ThemeStore";
 
-
-
 function App() {
   const location = useLocation();
   const { theme } = ThemeSet();
-  const hideNavbar = ["/login", "/signup", "/forgot-password"].includes(location.pathname);
+  const [navbarHidden, setNavbarHidden] = useState(false);
+
+  const hideNavbarRoutes = ["/login", "/signup", "/forgot-password"];
+  const shouldHideNavbar = hideNavbarRoutes.includes(location.pathname) || navbarHidden;
 
   return (
     <div className="min-h-screen flex flex-col bg-base-100" data-theme={theme}>
-      {!hideNavbar && <Navbar />}
+      {!shouldHideNavbar && <Navbar />}
 
-      <main className={`flex-1 ${!hideNavbar ? "pt-16" : ""} overflow-hidden`}>
+      <main className={`flex-1 ${!shouldHideNavbar ? "pt-16" : ""} overflow-hidden`}>
         <Routes>
-          <Route path="/" element={<HomePage />} />
+          <Route path="/" element={<HomePage hideNavbarSetter={setNavbarHidden} />} />
           <Route path="/login" element={<Login />} />
           <Route path="/signup" element={<SignUp />} />
           <Route path="/settings" element={<SettingPage />} />
@@ -32,6 +34,5 @@ function App() {
     </div>
   );
 }
-
 
 export default App;

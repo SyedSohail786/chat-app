@@ -7,10 +7,10 @@ const { otpModel } = require("../models/OtpModel");
 require("dotenv").config()
 
 const signup = async (req, res) => {
-     const { userName, email, password, profilePic, otp, lastSeen } = req.body;
-     const saltRounds = 10;
-     try {
 
+     try {
+          const { userName, email, password, profilePic, otp, lastSeen } = req.body;
+          const saltRounds = 10;
 
           const findOTP = await otpModel.findOne({ email })
           if (!findOTP) return res.status(201).json({ code: 76, message: "No OTP Found" })
@@ -400,9 +400,9 @@ const forgotPasswordOtpCheck = async (req, res) => {
 const getProfile = async (req, res) => {
      try {
           const { _id } = req.userData
-          
+
           const user = await userModel.findById(_id).select("-password")
-          if(!user) return res.status(201).json({message:"Invalid User"})
+          if (!user) return res.status(201).json({ message: "Invalid User" })
           res.status(200).json(user)
      } catch (error) {
           res.send({

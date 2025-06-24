@@ -21,7 +21,7 @@ const userSchema = new mongoose.Schema({
      },
      lastSeen: {
           type: Date,
-          default: new Date()
+          default: null
      }
 }, {
      timestamps: true

@@ -11,8 +11,7 @@ export default function AllChats({ onSelectChat }) {
   const [users, setUsers] = useState([]);
   const [loadingUsers, setLoadingUsers] = useState(false);
   const { setSelectedChat, fetchSelectedChats } = allMsgWork();
-  const {onlineUsers, setProfile} = socketStore()
-  const navigate = useNavigate()
+  const {onlineUsers} = socketStore()
   
   useEffect(() => {
     setLoadingUsers(true);
@@ -36,7 +35,6 @@ export default function AllChats({ onSelectChat }) {
     
     setSelectedChat(user)
     fetchSelectedChats(user._id)
-
     if (onSelectChat) {
       onSelectChat();
     }

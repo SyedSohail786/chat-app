@@ -11,13 +11,13 @@ const { app, server } = require("./src/utils/socket");
 
 app.use(cookieParser());
 app.use(express.json())
+app.use(cors());
 
 app.use(fileUpload({
      useTempFiles: true,
      tempFileDir: "/tmp/", 
 }));
 
-app.use(cors());
 app.use(authRoutes)
 app.use(messageRoutes)
 
