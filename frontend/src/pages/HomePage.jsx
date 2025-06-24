@@ -34,9 +34,7 @@ export default function HomePage({ hideNavbarSetter }) {
   }, [navigate, isMobile, isTablet]);
 
   useEffect(() => {
-    if (hideNavbarSetter) {
-      hideNavbarSetter(selectedChat && isMobile);
-    }
+    if (hideNavbarSetter) hideNavbarSetter(selectedChat && isMobile);
   }, [selectedChat, isMobile, hideNavbarSetter]);
 
   const handleUpload = (e) => {
@@ -81,11 +79,8 @@ export default function HomePage({ hideNavbarSetter }) {
 
   const renderChatInterface = () => (
     <div className="flex flex-col h-full w-full">
-      <div className="fixed top-0 left-0 right-0 z-10 h-16 px-4 flex items-center border-b bg-base-100">
-        <button className="mr-2 p-1 md:hidden" onClick={() => {
-          setShowChatList(true);
-          setSelectedChat(null);
-        }}>
+      <div className={`h-16 px-4 flex items-center border-b bg-base-100 ${isMobile ? 'fixed top-0 left-0 right-0 z-10' : ''}`}>
+        <button className="mr-2 p-1 md:hidden" onClick={() => setShowChatList(true)}>
           <FaAngleLeft size={20} />
         </button>
         {selectedChat && (
@@ -97,11 +92,14 @@ export default function HomePage({ hideNavbarSetter }) {
                 <p className="text-xs text-green-500">{onlineUsers.includes(selectedChat._id) ? "Online" : "Offline"}</p>
               </div>
             </div>
+            <div className='flex items-center py-2 px-3 border rounded-xl cursor-pointer' onClick={() => setSelectedChat(null)}>
+              <h1>Close</h1>
+            </div>
           </div>
         )}
       </div>
 
-      <div className="mt-16 mb-16 px-4 py-2 flex-1 overflow-y-auto space-y-2">
+      <div className={`${isMobile ? 'mt-16 mb-16' : ''} px-4 py-2 flex-1 overflow-y-auto space-y-2`}>
         {!loadingChat ? (
           messages.length ? (
             messages.map((msg) => (
@@ -126,7 +124,7 @@ export default function HomePage({ hideNavbarSetter }) {
         <div ref={messagesEndRef} />
       </div>
 
-      <div className="fixed bottom-0 left-0 right-0 h-16 px-4 border-t bg-base-100 flex items-center gap-2">
+      <div className={`h-16 px-4 border-t bg-base-100 flex items-center gap-2 ${isMobile ? 'fixed bottom-0 left-0 right-0 z-10' : ''}`}>
         {selectedChat && imageUrl && (
           <div className='absolute bottom-20 left-2 w-30'>
             <img src={imageUrl} alt="preview" />
@@ -209,7 +207,7 @@ export default function HomePage({ hideNavbarSetter }) {
   return (
     <div className="h-[calc(100vh-4rem)]">
       <div className="max-w-[1450px] w-full h-full mx-auto flex border overflow-hidden">
-        {isMobile || isTablet ? renderMobileTabletView() : renderDesktopView()}
+        {isMobile ? renderMobileTabletView() : renderDesktopView()}
       </div>
     </div>
   );
