@@ -157,9 +157,10 @@ export default function HomePage({ hideNavbarSetter }) {
         <div className="block w-full h-full bg-base-100">
           <AllChats onSelectChat={() => {
             setShowChatList(false);
-            if (isTablet) setShowChatList(true);
             disconnectSocket();
             connectSocket();
+            if (isTablet) setShowChatList(true);
+            
           }} />
         </div>
       );
